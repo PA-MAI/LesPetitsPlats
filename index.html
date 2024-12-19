@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+  <link rel="icon" type="image/svg" href="./assets/logo/logo.svg">
+  <title>Les petits plats - Recettes de cuisine</title>
+  <meta name="description" content="Recettes de cuisine">
+  <link href="./css/style.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope&display=swap" rel="stylesheet">
+  
+  
+   </head>
+  <body>
+  
+    <header class="header">
+    	<a href="./index.html" class="header__logo">
+        <img src="./assets/logo/logo.svg" alt="Logo du site Les petits plats">
+      </a>
+	    <div class="search__section">
+		    <h1 class="search__section--title">CHERCHEZ PARMI PLUS DE 1500 RECETTES <br /> DU QUOTIDIEN, SIMPLES ET DÉLICIEUSES</h1>
+        <section class="search__bar" id="searchBar">
+          <input type="text" id="searchInput" placeholder="Search.." name="search">
+          <div class="search__bar--button">
+            <button type="button" id="searchButton">
+              <img src="./assets/logo/search-buttonw.svg" class="search-icon normal"alt="Search">
+              <img src="./assets/logo/search-buttonb.svg" class="search-icon hover"alt="Search">
+            </button>
+          </div>
+        </section>
+	    </div>
+  </header>
+  
+<main id="main">
+	<section class="section__options">
+    
+    
+      <div class="selected__options"></div>
+      
+      <div class="search__options">
+	  
+        
+      </div>
+    </section>
+
+  
+    <section class="cards">
+	<!-- injection des cards de menue ici -->
+    </section>
+  </main>
+
+  </body>
+  <script type="module" src="./scripts/api/api.js"></script>
+  <script type="module" src="./scripts/templates/cards.js"></script>
+  <script type="module" src="./scripts/pages/index.js"></script>
+ </html>
