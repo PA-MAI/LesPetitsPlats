@@ -1,6 +1,6 @@
-import { ApiMenuCards } from '../api/api.js';
-import { ModelCardsTemplate } from '../templates/cards.js';
-import { searchRecipes } from '../utils/search1.js';
+import { ApiMenuCards } from './api/api.js';
+import { ModelCardsTemplate } from './templates/cards.js';
+import { searchRecipes } from './utils/search1.js';
 
 class AppMenuCard {
     constructor() {
@@ -10,7 +10,7 @@ class AppMenuCard {
         this.menuCards = []; // Stockage des recettes chargées
 
 
-        this.menuCardsApi = new ApiMenuCards('../data/recipe.json'); // API des recettes
+        this.menuCardsApi = new ApiMenuCards('./data/recipe.json'); // API des recettes
     }
 
     async init() {
