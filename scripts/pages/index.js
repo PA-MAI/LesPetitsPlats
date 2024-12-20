@@ -9,7 +9,6 @@ class AppMenuCard {
         this.$searchButton = document.getElementById('searchButton'); // Bouton de recherche
         this.menuCards = []; // Stockage des recettes chargées
 
-
         const basePath = window.location.pathname.includes('/LesPetitsPlats/') ? '/LesPetitsPlats/data/' : './data/';
         this.menuCardsApi = new ApiMenuCards(`${basePath}recipe.json`);
 
