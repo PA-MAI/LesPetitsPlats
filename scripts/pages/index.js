@@ -10,7 +10,10 @@ class AppMenuCard {
         this.menuCards = []; // Stockage des recettes chargées
 
 
-        this.menuCardsApi = new ApiMenuCards('../data/recipe.json'); // API des recettes
+        const basePath = window.location.pathname.includes('/LesPetitsPlats/') ? '/LesPetitsPlats/data/' : './data/';
+        this.menuCardsApi = new ApiMenuCards(`${basePath}recipe.json`);
+
+      
     }
 
     async init() {
