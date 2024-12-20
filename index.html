@@ -1,31 +1,36 @@
 <!DOCTYPE html>
 <html lang="fr">
   <head>
-  <meta charset="utf-8">
-  <link rel="icon" type="image/svg" href="../assets/logo/logo.svg">
+    <meta name="description" content="Recettes de cuisine">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="icon" type="image/svg+xml" href="./assets/logo/logo.svg">
   <title>Les petits plats - Recettes de cuisine</title>
-  <meta name="description" content="Recettes de cuisine">
+  
   <link href="./css/style.css" rel="stylesheet" type="text/css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Manrope&display=swap" rel="stylesheet">
-  </head>
+  <script  src="./scripts/api/api.js" type="module"></script>
+  <script  src="./scripts/templates/cards.js" type="module"></script>
+  <script  src="./scripts/pages/index.js" type="module"></script>
+   </head>
   <body>
   
-    <header class="header" role="banner">
-    	<div class="header__logo">
-        <img src="../assets/logo/logo.svg" title="Logo du site Les petits plats" alt="">
-      </div>
+    <header class="header">
+    	<a href="./index.html" class="header__logo">
+        <img src="./assets/logo/logo.svg" title="Logo du site Les petits plats"  alt="" btype="image/svg+xml">
+      </a>
 	    <div class="search__section">
-		    <h1 class="search__section--title" role="title">CHERCHEZ PARMI PLUS DE 1500 RECETTES <br /> DU QUOTIDIEN, SIMPLES ET DÉLICIEUSES</h1>
+		    <h1 class="search__section--title">CHERCHEZ PARMI PLUS DE 1500 RECETTES <br /> DU QUOTIDIEN, SIMPLES ET DÉLICIEUSES</h1>
         <section class="search__bar" id="searchBar">
           <input type="text" id="searchInput" placeholder="Search.." name="search">
           <div class="search__bar--button">
             <button type="button" id="searchButton">
-              <img src="../assets/logo/search-buttonw.svg" class="search-icon normal"alt="Search">
-              <img src="../assets/logo/search-buttonb.svg" class="search-icon hover"alt="Search">
+              <img src="./assets/logo/search-buttonw.svg" class="search-icon normal"alt="Search">
+              <img src="./assets/logo/search-buttonb.svg" class="search-icon hover"alt="Search">
             </button>
           </div>
         </section>
@@ -34,11 +39,10 @@
   
 <main id="main">
 	<section class="section__options">
-    
-    
+
       <div class="selected__options"></div>
       
-      <div class="search__options">
+      <div class="searched__options">
 	  
         
       </div>
@@ -46,12 +50,10 @@
 
   
     <section class="cards">
-	<!-- injection des cards de menue ici -->
+	<!-- injection des cards de menu ici -->
     </section>
   </main>
 
-  <script type="module" src="../scripts/api/api.js"></script>
-  <script type="module" src="../scripts/templates/cards.js"></script>
-  <script type="module" src="../scripts/pages/index.js"></script>
-  </body>
+</body>
+
  </html>
