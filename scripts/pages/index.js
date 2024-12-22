@@ -136,13 +136,27 @@ class AppMenuCard {
             console.warn("La div .result__total n'existe pas.");
         }
     }
-
+    checkNumberDigits(myNumber)
+    {
+        myNumber = myNumber.toString();
+        if ( myNumber.length < 2 )
+        {
+            return "0" + myNumber;
+        }
+        return myNumber;
+    }
     /**
      * Met à jour le texte affiché pour le nombre total de résultats.
      */
+    
     updateResultCount(count) {
         if (this.$resultTotal) {
-            this.$resultTotal.textContent = `${count} recettes`;
+          // Convertir count en chaîne de caractères
+        const countStr = String(count);
+        if (countStr.length < 2) {
+          count = "0" + countStr;
+      }
+        this.$resultTotal.textContent = `${count} recettes`;
         } else {
             console.warn("Impossible de mettre à jour les résultats : l'encart n'existe pas encore.");
         }
