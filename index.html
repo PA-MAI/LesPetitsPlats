@@ -18,7 +18,7 @@
   <script  src="./scripts/pages/index.js" type="module"></script>
    </head>
   <body>
-  
+
     <header class="header">
     	<a href="./index.html" class="header__logo">
         <img src="./assets/logo/Logo.svg" title="Logo du site Les petits plats"  alt="" type="image/svg+xml">
@@ -27,6 +27,7 @@
 		    <h1 class="search__section--title">CHERCHEZ PARMI PLUS DE 1500 RECETTES <br /> DU QUOTIDIEN, SIMPLES ET DÉLICIEUSES</h1>
         <section class="search__bar" id="searchBar">
           <input type="text" id="searchInput" placeholder="Search.." name="search">
+          <button id="clearButton" class="clear-button" style="display: none;">✖</button>
           <div class="search__bar--button">
             <button type="button" id="searchButton">
               <img src="./assets/logo/search-buttonw.svg" class="search-icon normal"alt="Search">
@@ -40,9 +41,11 @@
 <main id="main">
 	<section class="section__options">
 
-      <div class="selected__options"></div>
+      <div class="menu__options"></div>
       
-      <div class="searched__options">
+      <div class="result__options"></div>
+
+      <div class="result__total"></div>>
 	  
         
       </div>
@@ -53,6 +56,7 @@
 	<!-- injection des cards de menu ici -->
     </section>
   </main>
+
 
 </body>
 

@@ -1,24 +1,48 @@
 /**
- * Recherche les recettes correspondant à la requête.
+ * Recherche les recettes correspondant à la requête et gère l'affichage.
  * @param {Array} recipes - La liste complète des recettes.
  * @param {string} query - La chaîne de recherche saisie par l'utilisateur.
- * @returns {Array} - Un tableau des recettes filtrées.
+ * @param {HTMLElement} menuCardsWrapper - Conteneur des cartes.
+ * @param {Function} cardTemplateCallback - Fonction pour créer une carte.
  */
-export function searchRecipes(recipes, query) {
-    if (!query || query.length < 3) {
+export function searchRecipes(recipes, query, menuCardsWrapper, cardTemplateCallback) {
+  if (!query || query.length < 3) {
       console.warn('Veuillez saisir au moins 3 caractères.');
-      return recipes; // Retourne toutes les recettes si la requête est trop courte
-    }
-  
-    // Convertit la requête en minuscules pour une recherche insensible à la casse
-    const lowerCaseQuery = query.toLowerCase();
-  
-    // Filtre les recettes dont le nom ou l'ingredient contient la requête
-    return recipes.filter((recipe) =>
-      recipe.name.toLowerCase().includes(lowerCaseQuery) || 
-    recipe.ingredients.some(ingredient =>
-        ingredient.ingredient.toLowerCase().includes(lowerCaseQuery)  // On recherche dans la propriété `ingredient`
-      )
-    );
-
+      renderCards(menuCardsWrapper, recipes, cardTemplateCallback); // Affiche toutes les recettes
+      return;
   }
+
+  const lowerCaseQuery = query.toLowerCase();
+
+  // Filtrage fonctionnel
+  const filteredRecipes = recipes.filter((recipe) =>
+      recipe.name.toLowerCase().includes(lowerCaseQuery) ||
+      recipe.ingredients.some((ingredient) =>
+          ingredient.ingredient.toLowerCase().includes(lowerCaseQuery)
+      )
+  );
+
+  // Affichage des résultats filtrés
+  renderCards(menuCardsWrapper, filteredRecipes, cardTemplateCallback);
+}
+
+/**
+* Gère l'affichage des cartes dynamiquement de manière fonctionnelle.
+* @param {HTMLElement} menuCardsWrapper - Conteneur des cartes.
+* @param {Array} recipes - Les recettes à afficher.
+* @param {Function} cardTemplateCallback - Fonction pour créer une carte.
+*/
+export function renderCards(menuCardsWrapper, recipes, cardTemplateCallback) {
+  menuCardsWrapper.innerHTML = ''; // Réinitialise le conteneur
+
+  if (recipes.length === 0) {
+      menuCardsWrapper.innerHTML = '<p>Aucune recette trouvée!</p>';
+      return;
+  }
+
+  // Utilisation de map pour créer les cartes et les insérer
+  menuCardsWrapper.innerHTML = recipes
+      .map((recipe) => cardTemplateCallback(recipe).outerHTML)
+      .join('');
+      console.log (recipes)
+}

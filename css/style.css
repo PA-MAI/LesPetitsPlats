@@ -22,8 +22,8 @@ body{
     background-image: url("../assets/img/header.jpg") ;
     background-position: center;
     height:567px;
-
-    width: 1440px;
+    width:100%;
+    max-width: 1440px;
     align-self: center;
    
 
@@ -54,12 +54,13 @@ body{
     justify-content: center;
     align-self: center;
     width:100%;
+    position: relative;
 }
 .search__bar input[type=text]{
     width: 954px;
     height: 72px;
     border-radius: 10px 0 0 10px ;
-    float: center;
+    /*float: center;*/
     border: none;
     font-size: 17px;
 
@@ -67,6 +68,21 @@ body{
 .search__bar input:focus{
     outline: none;
     border: none; 
+  }
+.clear-button {
+    background: white;
+    border: none;
+    font-size: 16px;
+    color: grey; 
+    cursor: pointer;
+    position: absolute;
+    right: 18%; 
+    top: 50%;
+    transform: translateY(-50%); 
+    display: none; 
+  }
+  #searchInput {
+    padding-right: 30px;
   }
 .search__bar--button{
     border-radius: 0 10px 10px 0;
@@ -86,11 +102,12 @@ body{
     margin: 10px;
     position: relative;
     padding: 0;
+    transition:  0.4s ease-in-out;
 }
 
 .search__bar--button button:hover {
     background: var(--secondary-color);
-    
+    transition: 0.2s ease-in-out;
 }
 
 .search__bar--button .search-icon {
@@ -98,7 +115,7 @@ body{
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    transition: opacity 0.2s ease-in-out; 
+    transition: opacity 0.4s ease-in-out; 
 }
 
 .search__bar--button .hover {
@@ -117,7 +134,8 @@ body{
 
 #main{
     background-color: var(--primary-color);
-    width: 1440px;
+    width:100%;
+    max-width: 1440px;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -190,6 +208,7 @@ font-weight: 100;
     height: 26px;
     width: 65px;
     background: var(--secondary-color);
+    padding-top:8px;
     padding-left: 22px;
     border-radius: 15px;
     top:-240px;
@@ -197,4 +216,24 @@ font-weight: 100;
     font-family: var(--font-family-text);
     
 
+}
+@media screen and (max-width: 1350px){
+    .cards{
+        grid-template-columns: 1fr 1fr;
+    }
+    .search__section--title{
+        font-size: 34px;
+    }
+}
+@media screen and (max-width: 885px){
+    .cards{
+        justify-content: center;
+        align-content: center;
+        grid-template-columns: 1fr;
+        margin: 0 30%;
+    }
+    .search__section--title{
+        font-size: 24px;
+    }
+   
 }
