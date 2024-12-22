@@ -14,8 +14,7 @@ class AppMenuCard {
         this.menuCards = []; // Tableau pour stocker les données des recettes
         this.$sectionOptions = document.querySelector('.section__options');
 
-        
-        this.$resultTotal = document.querySelector('.result__total');
+        this.$resultTotal = null; // Initialisation de la propriété pour la div des résultats
 
         // Détermine le chemin pour charger les données en fonction de l'environnement
         const basePath = window.location.pathname.includes('/LesPetitsPlats/') ? '/LesPetitsPlats/data/' : './data/';
@@ -34,8 +33,14 @@ class AppMenuCard {
             // Charge les données des recettes depuis l'API
             this.menuCards = await this.menuCardsApi.getMenuCards();
 
+            // Ajoute la div pour afficher le nombre de résultats
+            this.addDivResult();
+
             // Affiche toutes les recettes par défaut au démarrage
             searchRecipes(this.menuCards, '', this.$menuCardsWrapper, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
+
+            // Met à jour le nombre de résultats affichés
+            this.updateResultCount(this.menuCards.length);
 
             // Configure les événements pour la recherche et le bouton de réinitialisation
             this.addSearchEvent();
@@ -49,41 +54,41 @@ class AppMenuCard {
      * Configure les événements pour la recherche.
      */
     addSearchEvent() {
-        // Écouteur d'événement sur le bouton de recherche
         this.$searchButton.addEventListener('click', () => {
-            const query = this.$searchInput.value.trim(); // Récupère la valeur de recherche saisie
+            const query = this.$searchInput.value.trim();
 
             // Gestion des messages d'avertissement pour les requêtes courtes
-            const inputField = document.getElementById('searchBar'); // Champ de recherche
+            const inputField = document.getElementById('searchBar');
             let existingWarning = inputField.nextElementSibling;
 
-            // Supprime tout message d'avertissement existant
             if (existingWarning && existingWarning.textContent === 'Veuillez saisir au moins 3 caractères.') {
                 existingWarning.remove();
             }
 
-            const warningMessage = document.createElement('div'); // Crée un élément pour afficher un avertissement
+            const warningMessage = document.createElement('div');
             warningMessage.textContent = 'Veuillez saisir au moins 3 caractères.';
             warningMessage.style.color = 'red';
 
-            // Si la requête est trop courte, affiche un message et montre toutes les recettes
             if (query.length < 3) {
-                inputField.insertAdjacentElement('afterend', warningMessage); // Insère le message sous le champ de recherche
+                inputField.insertAdjacentElement('afterend', warningMessage);
                 console.warn('Veuillez saisir au moins 3 caractères.');
                 searchRecipes(this.menuCards, '', this.$menuCardsWrapper, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
+                this.updateResultCount(this.menuCards.length); // Met à jour le nombre total de résultats
                 return;
             }
+            console.log("menucard",this.menuCards); 
 
             // Lance la recherche avec la requête saisie
-            searchRecipes(this.menuCards, query, this.$menuCardsWrapper, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
+            const filteredCards = searchRecipes(this.menuCards, query, this.$menuCardsWrapper, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
+            console.log ("filteredcard",filteredCards)
+            this.updateResultCount(filteredCards.length); // Met à jour le nombre de résultats affichés
+            
         });
 
-        // Écouteur d'événement sur le champ de saisie pour supprimer les avertissements en cas de nouvelle saisie
         this.$searchInput.addEventListener('input', () => {
-            const inputField = document.getElementById('searchBar'); // Champ de recherche
+            const inputField = document.getElementById('searchBar');
             let existingWarning = inputField.nextElementSibling;
 
-            // Supprime tout message d'avertissement existant
             if (existingWarning && existingWarning.textContent === 'Veuillez saisir au moins 3 caractères.') {
                 existingWarning.remove();
             }
@@ -94,21 +99,53 @@ class AppMenuCard {
      * Configure les événements pour le bouton de réinitialisation de l'input.
      */
     addClearButtonEvent() {
-        // Affiche ou masque le bouton de réinitialisation en fonction de la saisie
         this.$searchInput.addEventListener('input', () => {
             if (this.$searchInput.value.trim() !== '') {
-                this.$clearButton.style.display = 'block'; // Affiche le bouton si du texte est présent
+                this.$clearButton.style.display = 'block';
             } else {
-                this.$clearButton.style.display = 'none'; // Cache le bouton si le champ est vide
+                this.$clearButton.style.display = 'none';
             }
         });
 
-        // Réinitialise le champ de recherche lorsqu'on clique sur le bouton de réinitialisation
         this.$clearButton.addEventListener('click', () => {
-            this.$searchInput.value = ''; // Vide le champ de recherche
-            this.$clearButton.style.display = 'none'; // Cache le bouton de réinitialisation
-            this.$searchInput.focus(); // Donne le focus au champ de recherche
+            this.$searchInput.value = '';
+            this.$clearButton.style.display = 'none';
+            this.$searchInput.focus();
+
+            // Réinitialise l'affichage des cartes et le nombre total de résultats
+            searchRecipes(this.menuCards, '', this.$menuCardsWrapper, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
+            this.updateResultCount(this.menuCards.length);
         });
+    }
+
+    /**
+     * Ajoute une div pour afficher le nombre total de résultats.
+     */
+    addDivResult() {
+     
+        const resultTotalDiv = document.querySelector('.result__total'); // Sélectionne la div result__total
+        if (resultTotalDiv) {
+            const divResult = document.createElement('div');
+            divResult.classList.add('result__total--div');
+            divResult.textContent = "Résultats : "; // Contenu par défaut
+    
+            // Ajoute la div result__total--div à la div result__total
+            resultTotalDiv.appendChild(divResult);
+            this.$resultTotal = divResult; // Stocke l'élément pour mise à jour ultérieure
+        } else {
+            console.warn("La div .result__total n'existe pas.");
+        }
+    }
+
+    /**
+     * Met à jour le texte affiché pour le nombre total de résultats.
+     */
+    updateResultCount(count) {
+        if (this.$resultTotal) {
+            this.$resultTotal.textContent = `${count} recettes`;
+        } else {
+            console.warn("Impossible de mettre à jour les résultats : l'encart n'existe pas encore.");
+        }
     }
 }
 

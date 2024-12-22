@@ -9,7 +9,7 @@ export function searchRecipes(recipes, query, menuCardsWrapper, cardTemplateCall
   if (!query || query.length < 3) {
       console.warn('Veuillez saisir au moins 3 caractères.');
       renderCards(menuCardsWrapper, recipes, cardTemplateCallback); // Affiche toutes les recettes
-      return;
+      return recipes; // Retourne toutes les recettes si la recherche est vide
   }
 
   const lowerCaseQuery = query.toLowerCase();
@@ -24,6 +24,7 @@ export function searchRecipes(recipes, query, menuCardsWrapper, cardTemplateCall
 
   // Affichage des résultats filtrés
   renderCards(menuCardsWrapper, filteredRecipes, cardTemplateCallback);
+  return filteredRecipes; // Retourne les recettes filtrées
 }
 
 /**
@@ -44,5 +45,5 @@ export function renderCards(menuCardsWrapper, recipes, cardTemplateCallback) {
   menuCardsWrapper.innerHTML = recipes
       .map((recipe) => cardTemplateCallback(recipe).outerHTML)
       .join('');
-      console.log (recipes)
+      console.log ("nombre d'elements affichés",recipes)
 }
