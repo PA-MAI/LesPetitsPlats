@@ -1,6 +1,8 @@
 import { ApiMenuCards } from '../api/api.js';
 import { ModelCardsTemplate } from '../templates/cards.js';
 import { searchRecipes } from '../utils/search1.js';
+import { FilterOptions } from '../templates/filterOptions.js';
+
 
 /**
  * Classe principale pour gérer l'application des cartes de menu.
@@ -161,6 +163,8 @@ class AppMenuCard {
             console.warn("Impossible de mettre à jour les résultats : l'encart n'existe pas encore.");
         }
     }
+
+    
 }
 
 // Instancie et initialise l'application

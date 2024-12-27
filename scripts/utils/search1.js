@@ -17,6 +17,7 @@ export function searchRecipes(recipes, query, menuCardsWrapper, cardTemplateCall
   // Filtrage fonctionnel
   const filteredRecipes = recipes.filter((recipe) =>
       recipe.name.toLowerCase().includes(lowerCaseQuery) ||
+      recipe.description.toLowerCase().includes(lowerCaseQuery) ||
       recipe.ingredients.some((ingredient) =>
           ingredient.ingredient.toLowerCase().includes(lowerCaseQuery)
       )
@@ -41,8 +42,8 @@ export function renderCards(menuCardsWrapper, recipes, cardTemplateCallback) {
       return;
   }
 
-  // Utilisation de map pour créer les cartes et les insérer
-  menuCardsWrapper.innerHTML = recipes
+  // Création et insertion des cartes de menu
+    menuCardsWrapper.innerHTML = recipes
       .map((recipe) => cardTemplateCallback(recipe).outerHTML)
       .join('');
       console.log ("nombre d'elements affichés",recipes)
