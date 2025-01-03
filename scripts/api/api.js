@@ -30,6 +30,19 @@ export class ApiMenuCards extends Api {
             if (!Array.isArray(recipes)) {
                 throw new Error('The "recipes" key is not an array');
             }
+             // Vérifier si chaque recette contient les propriétés attendues
+            recipes.forEach(recipe => {
+            if (!recipe.ingredients || !Array.isArray(recipe.ingredients)) {
+                console.warn(`Missing or invalid ingredients for recipe: ${recipe.name}`);
+            }
+            if (typeof recipe.appliance !== 'string') {
+                console.warn(`Missing or invalid appliance for recipe: ${recipe.name}`);
+            }
+            if (!Array.isArray(recipe.ustensils)) {
+                console.warn(`Missing or invalid ustensils for recipe: ${recipe.name}`);
+            }
+        });
+            this.menuCards = recipes;
             return recipes; // Retourne le tableau des recettes
         } catch (error) {
             console.error('Failed to fetch menu cards:', error);
