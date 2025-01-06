@@ -1,7 +1,7 @@
-import { ApiMenuCards } from '../api/api.js';
-import { ModelCardsTemplate } from '../templates/cards.js';
-import { FilterOptions } from '../templates/FilterOptions.js';
-import { searchRecipes, renderCards } from '../utils/search1.js';
+import { ApiMenuCards } from './api/api.js';
+import { ModelCardsTemplate } from './templates/cards.js';
+import { FilterOptions } from './templates/FilterOptions.js';
+import { searchRecipes, renderCards } from './utils/search1.js';
 
 
 

@@ -1,4 +1,4 @@
-import { ModelCardsTemplate } from '../templates/cards.js';
+import { ModelCardsTemplate } from './templates/cards.js';
 
 
 
