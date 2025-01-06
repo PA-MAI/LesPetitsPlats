@@ -228,7 +228,7 @@ export class FilterOptions {
 
   //const resultCount = document.querySelector('.result__total');
 //if (resultCount) {
-    // Utilisez la méthode updateResultCount de FilterOptions
+    //  méthode updateResultCount de FilterOptions
     //filterOptions.updateResultCount(varfilteredRecipes.length);
 //}
 
