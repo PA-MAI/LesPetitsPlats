@@ -1,7 +1,7 @@
 import { ApiMenuCards } from '../api/api.js';
 import { ModelCardsTemplate } from '../templates/cards.js';
 //import { searchRecipes, renderCards } from '../utils/search1.js';
-import { searchRecipes, renderCards } from '../utils/search2.js';
+import { searchRecipes,updateResultCount, renderCards } from '../utils/search2.js';
 import { FilterOptions } from '../templates/filterOptions.js';
 
 
@@ -17,8 +17,9 @@ class AppMenuCard {
         this.menuCards = []; // Tableau pour stocker les données des recettes
         this.$sectionOptions = document.querySelector('.section__options');
         this.renderCards=renderCards
+        this.$clearButton = document.getElementById('clearButton');
 
-        this.$resultTotal = null; // Initialisation de la propriété pour la div des résultats
+        this.$resultTotal = document.querySelector('.result__total');// Initialisation de la propriété pour la div des résultats
 
         // Détermine le chemin pour charger les données en fonction de l'environnement
         const basePath = window.location.pathname.includes('/LesPetitsPlats/') ? '/LesPetitsPlats/data/' : './data/';
@@ -55,7 +56,7 @@ class AppMenuCard {
             this.filterMenuOptions();
 
             // Met à jour le nombre de résultats affichés
-            this.updateResultCount(this.menuCards.length);
+            updateResultCount(this.$resultTotal, this.menuCards.length);;
             
 
         //définition de $resultTotal
@@ -85,29 +86,34 @@ class AppMenuCard {
      * Configure les événements pour la recherche.
      */
     addSearchEvent() {
-        this.$searchButton.addEventListener('click', () => {
-            // Récupérer la recherche principale
-            const query = this.$searchInput.value.trim();
-    
-            // Afficher un message si la recherche est trop courte
-            if (query.length < 3) {
-                console.warn('Veuillez saisir au moins 3 caractères.');
-                this.updateResultCount(this.menuCards.length);
-                return;
-            }
-    
-            // Récupérer les options sélectionnées
-            const selectedOptions = this.getSelectedOptions();
-    
-            // Effectuer une recherche combinée : recherche principale + filtres
-            const fullyFilteredCards = this.filterRecipes(query.toLowerCase(), selectedOptions);
-    
-            // Mettre à jour les résultats
-            this.updateResultCount(fullyFilteredCards.length);
-            this.renderCards(this.$menuCardsWrapper, fullyFilteredCards, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
-        });
-    }
- 
+    this.$searchButton.addEventListener('click', () => {
+        // Récupérer la recherche principale
+        const query = this.$searchInput.value.trim();
+
+        // Afficher un message si la recherche est trop courte
+        if (query.length < 3) {
+            console.warn('Veuillez saisir au moins 3 caractères.');
+            updateResultCount(this.$resultTotal, this.menuCards.length);
+            return;
+        }
+
+        // Récupérer les options sélectionnées
+        const selectedOptions = this.getSelectedOptions();
+
+        // Utiliser searchRecipes pour effectuer une recherche combinée
+        const fullyFilteredCards = searchRecipes(
+            this.menuCards, 
+            query, 
+            this.$menuCardsWrapper, 
+            (recipe) => new ModelCardsTemplate(recipe).createMenuCard(), 
+            selectedOptions
+        );
+
+        // Mettre à jour les résultats
+        updateResultCount(this.$resultTotal, fullyFilteredCards.length); 
+        this.renderCards(this.$menuCardsWrapper, fullyFilteredCards, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
+    });
+}
 
     /**
      * Configure les événements pour le bouton de réinitialisation de l'input.
@@ -128,36 +134,10 @@ class AppMenuCard {
 
             // Réinitialise l'affichage des cartes et le nombre total de résultats
             searchRecipes(this.menuCards, '', this.$menuCardsWrapper, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
-            this.updateResultCount(this.menuCards.length);
+            updateResultCount(this.$resultTotal, this.menuCards.length);
         });
     }
-    /** 
-        * Filtre les recettes en fonction de la recherche principale et des options sélectionnées.
-    * @param {string} query - Requête de recherche principale.
-    * @param {Set} selectedOptions - Ensemble des options sélectionnées.
-    * @returns {Array} - Tableau des recettes filtrées.
-    */
-   
     
-    filterRecipes(query, selectedOptions) {
-        
-        
-        // Étape 1 : Filtrer les recettes selon la recherche générale
-        const generalSearchResults = searchRecipes(this.menuCards, query, this.$menuCardsWrapper, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
-    
-        // Étape 2 : Filtrer les recettes selon les options sélectionnées
-        const filterOptions = new FilterOptions();
-        const optionFilteredResults = filterOptions.filterByOptions(this.menuCards, selectedOptions);
-    
-        // Étape 3 : Concaténer les deux ensembles de résultats en gardant les intersections
-        const combinedResults = generalSearchResults.filter(recipe => 
-            optionFilteredResults.includes(recipe)
-        );
-    
-        // Retourner les résultats combinés
-        console.warn("recettes combinées",combinedResults)
-        return combinedResults;
-    }
        
     filterMenuOptions() {
         if (!this.menuCards || this.menuCards.length === 0) {
@@ -188,15 +168,7 @@ class AppMenuCard {
     
         
         // Ajoute des interactions pour les filtres
-        const updateRecipes = () => {
-            const query = this.$searchInput.value.trim();
-            const filteredCards = this.filterRecipes(query, selectedOptions);
-            searchRecipes(filteredCards, '', this.$menuCardsWrapper, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
-            this.updateResultCount(filteredCards.length);
-            // Mettre à jour le total des résultats
-            this.updateResultCount(filteredRecipes.length);
-        };
-    
+
         [ingredientMenu, applianceMenu, utensilMenu].forEach(menu => {
             menu.addDropdownInteractions = (container, dropdownButton, dropdownList, searchInput) => {
                 dropdownList.addEventListener('click', (e) => {
@@ -242,33 +214,13 @@ class AppMenuCard {
         if (resultTotalDiv) {
             const divResult = document.createElement('div');
             divResult.classList.add('result__total--div');
-            divResult.textContent = "Résultats : "; // Contenu par défaut
+            //divResult.textContent = "Résultats : "; // Contenu par défaut
     
             // Ajoute la div result__total--div à la div result__total
             resultTotalDiv.appendChild(divResult);
             this.$resultTotal = divResult; // Stocke l'élément pour mise à jour ultérieure
         } else {
             console.warn("La div .result__total n'existe pas.");
-        }
-    }
-
-    /**
-     * Met à jour le texte affiché pour le nombre total de résultats.
-     */
-    
-    updateResultCount(count) {
-        if (this.$resultTotal) {
-          // Convertir count en chaîne de caractères
-        //const countStr = String(count);
-        const countStr = count < 10 ? `0${count}` : `${count}`;
-
-        if (countStr.length < 2) {
-          count = "0" + countStr;
-      }
-      this.$resultTotal.textContent = `${countStr} recette${count > 1 ? 's' : ''}`;
-        //this.$resultTotal.textContent = `${count} recettes`;
-        } else {
-            console.warn("Impossible de mettre à jour les résultats : l'encart n'existe pas encore.");
         }
     }
 

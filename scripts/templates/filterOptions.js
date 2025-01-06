@@ -1,5 +1,5 @@
 import { ModelCardsTemplate } from '../templates/cards.js';
-
+import { searchRecipes,updateResultCount,renderCards} from '../utils/search2.js';
 
 
 
@@ -59,12 +59,10 @@ export class FilterOptions {
         dropdownButton.setAttribute('aria-expanded', !isExpanded);
         dropdownList.setAttribute('aria-hidden', isExpanded);
         dropdownList.classList.toggle('dropdown__list--visible', !isExpanded);
-        dropdownList.classList.toggle('dropdown__search--spanvisible', !isExpanded);
         searchInput.classList.toggle('dropdown__search--visible', !isExpanded);
         dropdownButton.classList.toggle('dropdown__button--selected', !isExpanded);
         });
-        const searchSpan = document.createElement('span');
-        searchSpan.classList.add('dropdown__search--span');
+       
 
       // Ajouter les interactions au menu déroulant
       this.addDropdownInteractions(dropdownContainer, dropdownButton, dropdownList, searchInput);
@@ -90,32 +88,32 @@ export class FilterOptions {
     dropdownList.addEventListener('click', (e) => {
         if (e.target.classList.contains('dropdown__item')) {
             this.addToResultOptions(e.target.textContent);
-           // container.classList.remove('dropdown__list--visible');
+            
              // Masquer le menu déroulant après la sélection
              this.hideDropdown(dropdownList);
-             this.hideDropdown(searchInput)
+             this.hideSearchInput(searchInput);
+             this.makeRadius(dropdownButton);
         }
     });
-
-    // Gestion du clic en dehors pour fermer le menu
-    document.addEventListener('click', (e) => {
+        // ferme les menu sur le click exterieur
+         document.addEventListener('click', (e) => {
         if (!container.contains(e.target)) {
             dropdownButton.setAttribute('aria-expanded', 'false');
             dropdownList.setAttribute('aria-hidden', 'true');
-           // container.classList.remove('dropdown__list--visible');
-           this.hideDropdown(dropdownList);
-           this.hideDropdown(searchInput)
+            this.hideDropdown(dropdownList);
+            this.hideSearchInput(searchInput);
+            this.makeRadius(dropdownButton); 
         }
     });
-}
-
-      
-
+    }
 
     addToResultOptions(option) {
         const resultOptions = document.querySelector('.result__options');
+        const resultTotalElement = document.querySelector('.result__total');
+        const menuCardsWrapper = document.querySelector('.cards');
+    
         if ([...resultOptions.children].some(child => child.textContent.includes(option))) return;
-
+    
         const resultItem = document.createElement('div');
         resultItem.className = 'result__item';
         resultItem.innerHTML = `
@@ -126,18 +124,18 @@ export class FilterOptions {
         // Suppression au clic sur la croix
         resultItem.querySelector('.remove-option').addEventListener('click', () => {
             resultItem.remove();
-            // Recharger les cartes selon les options restantes
-            this.updateFilteredCards();
+            this.updateFilteredCards(menuCardsWrapper, resultTotalElement);
             // Ajuster la position de .cards (soustraire 50px lors de la suppression)
             this.adjustCardsPosition('remove');
-    });
+        });
+      
 
     resultOptions.appendChild(resultItem);
 
     // Descendre la section .cards de 50px lorsqu'une option est ajoutée
     this.adjustCardsPosition('add');
 
-    this.updateFilteredCards();
+    this.updateFilteredCards(menuCardsWrapper, resultTotalElement);
 
     
     }
@@ -159,16 +157,20 @@ export class FilterOptions {
     hideDropdown(dropdownList) {
         if (dropdownList) {
             dropdownList.classList.remove('dropdown__list--visible'); 
-            
-            
-        }
-        if (searchInput) {
-            searchInput.classList.remove('dropdown__search--visible');
-            
-
         }
     }
-
+    hideSearchInput (searchInput) {
+        if (searchInput) {
+            searchInput.classList.remove('dropdown__search--visible');
+        }
+    }
+    makeRadius(dropdownButton) {
+        if (dropdownButton && dropdownButton.classList.contains('dropdown__button--selected')) {
+            console.log('Suppression de la classe .dropdown__button--selected');
+            dropdownButton.classList.remove('dropdown__button--selected');
+        }
+    
+    }
    // Méthode pour ajuster la position de .cards
     adjustCardsPosition(action) {
         const cards = document.querySelector('.cards');
@@ -177,18 +179,18 @@ export class FilterOptions {
             const currentMargin = parseInt(cards.style.marginTop || 0);
             
             if (action === 'add') {
-                // Ajouter 50px si une option est ajoutée
+                // Ajouter 60px si une option est ajoutée
                 cards.style.marginTop = `${currentMargin + 60}px`;
             } else if (action === 'remove') {
-                // Soustraire 50px si une option est supprimée
-                cards.style.marginTop = `${Math.max(currentMargin - 60, 0)}px`; // Assurez-vous que margin-top ne devienne pas négatif
+                // Soustraire 60px si une option est supprimée
+                cards.style.marginTop = `${Math.max(currentMargin - 60, 0)}px `; 
             }
         }
     }
 
     // Mettre à jour les cartes selon les options
-    updateFilteredCards() {
-        const selectedOptions = this.getSelectedOptions();
+    updateFilteredCards(menuCardsWrapper, resultTotalElement) {
+        const selectedOptions = this.getSelectedOptions(); 
         console.log("Options sélectionnées :", [...selectedOptions]);
     
         const currentDisplayedRecipes = Array.from(document.querySelectorAll('.card__title'))
@@ -198,9 +200,7 @@ export class FilterOptions {
             this.menuCards.filter(recipe => currentDisplayedRecipes.includes(recipe.name.toLowerCase())),
             selectedOptions
         );
-    
-        console.log("Recettes après le filtrage des options :", varfilteredRecipes);
-    
+
         const cardsContainer = document.querySelector('.cards');
         cardsContainer.innerHTML = ''; // Efface les cartes précédentes
         varfilteredRecipes.forEach(recipe => {
@@ -208,46 +208,15 @@ export class FilterOptions {
             cardsContainer.appendChild(card);
         });
 
-        
-           // updateResultCount(count) {
-            //    if (this.$resultTotal) {
-            //        // Convertir count en chaîne de caractères
-            //        const countStr = count < 10 ? `0${count}` : `${count}`;
-             //       if (countStr.length < 2) {
-             //           count = "0" + countStr;
-             //       }
-             //       this.$resultTotal.textContent = `${countStr} recette${count > 1 ? 's' : ''}`;
-             //   } else {
-             //       console.warn("Impossible de mettre à jour les résultats : l'encart n'existe pas encore.");
-              //  }
-          //  }
-      //  }
-  //  }    
-
-
-
-  //const resultCount = document.querySelector('.result__total');
-//if (resultCount) {
-    // Utilisez la méthode updateResultCount de FilterOptions
-    //filterOptions.updateResultCount(varfilteredRecipes.length);
-//}
-
-//if (varfilteredRecipes.length === 0) {
-//    cardsContainer.innerHTML = '<p class="warn__message">Aucune recette trouvée !</p>';
-//}
-const resultCount = document.querySelector('.result__total');
-
-// Ajouter un zéro devant si la longueur est inférieure à 10
-let formattedCount = varfilteredRecipes.length < 10 ? `0${varfilteredRecipes.length}` : varfilteredRecipes.length;
-
-if (resultCount) {
-    resultCount.textContent = `${formattedCount} recette${varfilteredRecipes.length > 1 ? 's' : ''}`;
-}
-
-if (varfilteredRecipes.length === 0) {
-    cardsContainer.innerHTML = '<p class="warn__message">Aucune recette trouvée !</p>';
-}
+    
+        console.log("Recettes après filtrage :", varfilteredRecipes);
+        // Mise à jour du nombre de résultats avec `updateResultCount`
+        updateResultCount(resultTotalElement, varfilteredRecipes.length);
+    
+        // Rend les cartes avec les résultats filtrés
+        renderCards(menuCardsWrapper, varfilteredRecipes, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
     }
+
 
    /**
      * Filtre les recettes par les options sélectionnées.
