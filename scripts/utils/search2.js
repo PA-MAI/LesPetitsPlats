@@ -56,7 +56,8 @@ export function searchRecipes(recipes, query, menuCardsWrapper, cardTemplateCall
         const filterOptions = new FilterOptions();
         varfilteredRecipes = filterOptions.filterByOptions(varfilteredRecipes, selectedOptions);
     }
-
+    
+   
     console.log("Recettes correspondant à la recherche et aux filtres :", varfilteredRecipes);
 
     // Affichage des résultats filtrés

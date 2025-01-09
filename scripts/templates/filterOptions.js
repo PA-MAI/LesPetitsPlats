@@ -14,42 +14,65 @@ export class FilterOptions {
     createDropdown() {
         // Conteneur principal du menu
         const dropdownContainer = document.createElement('div');
-        dropdownContainer.classList.add('dropdown', `dropdown--${this.type}`);
+            dropdownContainer.classList.add('dropdown', `dropdown--${this.type}`);
 
         // Bouton pour ouvrir/fermer le menu
         const dropdownButton = document.createElement('button');
-        dropdownButton.classList.add('dropdown__button');
-        dropdownButton.setAttribute('aria-expanded', 'false');
-        dropdownButton.textContent = `${this.type}`;
-        dropdownContainer.appendChild(dropdownButton);
+            dropdownButton.classList.add('dropdown__button');
+            dropdownButton.setAttribute('aria-expanded', 'false');
+            dropdownButton.textContent = `${this.type}`;
+            dropdownContainer.appendChild(dropdownButton);
 
-        // Liste déroulante
-        const dropdownList = document.createElement('ul');
-        dropdownList.classList.add('dropdown__list');
-        dropdownList.setAttribute('aria-hidden', 'true');
+
+         // Liste déroulante
+         const dropdownList = document.createElement('ul');
+            dropdownList.classList.add('dropdown__list');
+            dropdownList.setAttribute('aria-hidden', 'true');
+
+         // conteneur pour l'input et les icônes
+         const inputContainer = document.createElement('div');
+             inputContainer.classList.add('input__container');
 
          // Barre de recherche
          const searchInput = document.createElement('input');
-         searchInput.type = 'text';
-         searchInput.classList.add('dropdown__search');
-         searchInput.placeholder = `${this.type.toLowerCase()}...`;
-         searchInput.name = 'dropdown-search';
+            searchInput.type = 'text';
+            searchInput.classList.add('dropdown__search');
+            searchInput.placeholder = `${this.type.toLowerCase()}...`;
+            searchInput.name = 'dropdown-search';
+
+            // Crée l'élément pour la croix
+            const clearIcon = document.createElement('span');
+            clearIcon.classList.add('clear__icon');
+            clearIcon.innerHTML = '✖';
+
+            // Crée l'élément pour la loupe (tu peux aussi utiliser une balise <img>)
+            const searchIcon = document.createElement('span');
+            searchIcon.classList.add('search__icon');
+            searchIcon.innerHTML = '<img src="./assets/logo/ploupe.png">';  
+
+            // Ajoute l'input, la croix et la loupe dans le conteneur
+            inputContainer.appendChild(searchInput);
+            inputContainer.appendChild(clearIcon);
+            inputContainer.appendChild(searchIcon);
+
+            // Ajoute le conteneur au menu déroulant
+            dropdownContainer.appendChild(inputContainer);
 
         // Ajouter chaque élément à la liste
         this.items.forEach(item => {
-            const listItem = document.createElement('li');
-            listItem.classList.add('dropdown__item');
-            listItem.textContent = item;
-            listItem.addEventListener('click', () => {
-                console.log(`${item} sélectionné dans ${this.type}`);
-            });
+                const listItem = document.createElement('li');
+                listItem.classList.add('dropdown__item');
+                listItem.textContent = item;
+                listItem.addEventListener('click', () => {
+                    console.log(`${item} sélectionné dans ${this.type}`);
+                });
 
             dropdownList.appendChild(listItem);
         });
 
         // Ajouter la barre de recherche et la liste au conteneur principal
         dropdownContainer.appendChild(dropdownList);
-        dropdownContainer.appendChild(searchInput);
+        //dropdownContainer.appendChild(searchInput);
 
       
 
@@ -59,13 +82,14 @@ export class FilterOptions {
         dropdownButton.setAttribute('aria-expanded', !isExpanded);
         dropdownList.setAttribute('aria-hidden', isExpanded);
         dropdownList.classList.toggle('dropdown__list--visible', !isExpanded);
+        inputContainer.classList.toggle('input__container--visible', !isExpanded);
         searchInput.classList.toggle('dropdown__search--visible', !isExpanded);
         dropdownButton.classList.toggle('dropdown__button--selected', !isExpanded);
         });
        
 
       // Ajouter les interactions au menu déroulant
-      this.addDropdownInteractions(dropdownContainer, dropdownButton, dropdownList, searchInput);
+      this.addDropdownInteractions(dropdownContainer, dropdownButton, dropdownList, searchInput,inputContainer,clearIcon);
 
     return dropdownContainer;
 
@@ -73,7 +97,7 @@ export class FilterOptions {
     
 
     // Méthode pour ajouter les interactions
-    addDropdownInteractions(container, dropdownButton, dropdownList, searchInput) {
+    addDropdownInteractions(container, dropdownButton, dropdownList, searchInput,inputContainer,clearIcon) {
     
      // Gestion du filtrage
      searchInput.addEventListener('input', (e) => {
@@ -82,29 +106,37 @@ export class FilterOptions {
         items.forEach(item => {
             item.style.display = item.textContent.toLowerCase().includes(query) ? '' : 'none';
         });
+       
+    });
+    clearIcon.addEventListener('click', () => {
+        searchInput.value = '';  // Efface la valeur de l'input
+        //searchInput.focus();     // Remet le focus sur l'input
     });
 
     // Gestion de la sélection d'une option
     dropdownList.addEventListener('click', (e) => {
         if (e.target.classList.contains('dropdown__item')) {
             this.addToResultOptions(e.target.textContent);
-            
              // Masquer le menu déroulant après la sélection
-             this.hideDropdown(dropdownList);
-             this.hideSearchInput(searchInput);
-             this.makeRadius(dropdownButton);
-        }
+             this.hideDropdown(dropdownList,inputContainer,searchInput,dropdownButton);
+            }
     });
         // ferme les menu sur le click exterieur
          document.addEventListener('click', (e) => {
         if (!container.contains(e.target)) {
             dropdownButton.setAttribute('aria-expanded', 'false');
             dropdownList.setAttribute('aria-hidden', 'true');
-            this.hideDropdown(dropdownList);
-            this.hideSearchInput(searchInput);
-            this.makeRadius(dropdownButton); 
+            this.hideDropdown(dropdownList,inputContainer,searchInput,dropdownButton);
+        
         }
     });
+    // Efface la valeur de l'input
+    clearIcon.addEventListener('click', () => {
+        searchInput.value = '';  
+        searchInput.focus();     
+        
+    });
+   
     }
 
     addToResultOptions(option) {
@@ -125,8 +157,12 @@ export class FilterOptions {
         resultItem.querySelector('.remove-option').addEventListener('click', () => {
             resultItem.remove();
             this.updateFilteredCards(menuCardsWrapper, resultTotalElement);
+
             // Ajuster la position de .cards (soustraire 50px lors de la suppression)
             this.adjustCardsPosition('remove');
+            
+            console.log("recipe",searchRecipes)
+            console.log("cards",renderCards)
         });
       
 
@@ -153,24 +189,25 @@ export class FilterOptions {
         console.log("Options récupérées (nettoyées) :", [...selectedOptions]);
         return selectedOptions;
     }
+
+
     // Méthode pour masquer le menu déroulant
-    hideDropdown(dropdownList) {
+    hideDropdown(dropdownList,inputContainer,searchInput,dropdownButton) {
         if (dropdownList) {
-            dropdownList.classList.remove('dropdown__list--visible'); 
+            dropdownList.classList.remove('dropdown__list--visible');
         }
-    }
-    hideSearchInput (searchInput) {
-        if (searchInput) {
+        if (inputContainer) {
+            inputContainer.classList.remove('input__container--visible'); 
+        }
+        if (searchInput) {   
             searchInput.classList.remove('dropdown__search--visible');
         }
-    }
-    makeRadius(dropdownButton) {
         if (dropdownButton && dropdownButton.classList.contains('dropdown__button--selected')) {
-            console.log('Suppression de la classe .dropdown__button--selected');
             dropdownButton.classList.remove('dropdown__button--selected');
         }
-    
     }
+
+ 
    // Méthode pour ajuster la position de .cards
     adjustCardsPosition(action) {
         const cards = document.querySelector('.cards');

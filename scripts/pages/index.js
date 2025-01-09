@@ -89,6 +89,8 @@ class AppMenuCard {
     this.$searchButton.addEventListener('click', () => {
         // Récupérer la recherche principale
         const query = this.$searchInput.value.trim();
+        // Récupérer les options sélectionnées
+        const selectedOptions = this.getSelectedOptions();
 
         // Afficher un message si la recherche est trop courte
         if (query.length < 3) {
@@ -96,9 +98,6 @@ class AppMenuCard {
             updateResultCount(this.$resultTotal, this.menuCards.length);
             return;
         }
-
-        // Récupérer les options sélectionnées
-        const selectedOptions = this.getSelectedOptions();
 
         // Utiliser searchRecipes pour effectuer une recherche combinée
         const fullyFilteredCards = searchRecipes(
