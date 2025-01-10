@@ -30,7 +30,7 @@ body{
 }
 .header__logo img{
     width: 207px;
-    height:25.3px;
+    height: 25.3px;
     padding: 51px 69px;
 }
 
@@ -65,8 +65,12 @@ body{
     border: none;
     font-size: 17px;
     padding-left:20px;
-    
 
+}
+.warning3c{
+    color:red;
+    font-size: 16px;
+    font-family: var(--font-family-text);
 }
 .search__bar input:focus{
     outline: none;

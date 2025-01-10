@@ -139,7 +139,7 @@ export class FilterOptions {
    
     }
 
-    addToResultOptions(option) {
+    addToResultOptions(option,selectedOptions) {
         const resultOptions = document.querySelector('.result__options');
         const resultTotalElement = document.querySelector('.result__total');
         const menuCardsWrapper = document.querySelector('.cards');
@@ -157,14 +157,14 @@ export class FilterOptions {
         resultItem.querySelector('.remove-option').addEventListener('click', () => {
             resultItem.remove();
             this.updateFilteredCards(menuCardsWrapper, resultTotalElement);
+           
 
             // Ajuster la position de .cards (soustraire 50px lors de la suppression)
             this.adjustCardsPosition('remove');
             
-            console.log("recipe",searchRecipes)
-            console.log("cards",renderCards)
+         
         });
-      
+       
 
     resultOptions.appendChild(resultItem);
 
@@ -180,13 +180,14 @@ export class FilterOptions {
          * @returns {Set} Ensemble des options sélectionnées.
          */
     // Méthode pour afficher le menu déroulant
-    getSelectedOptions() {
+    getSelectedOptions(menuCardsWrapper, resultTotalElement) {
         const selectedOptions = new Set();
         document.querySelectorAll('.result__item').forEach(option => {
             const cleanOption = option.textContent.replace('✖', '').trim();
             selectedOptions.add(cleanOption);
         });
         console.log("Options récupérées (nettoyées) :", [...selectedOptions]);
+        
         return selectedOptions;
     }
 
@@ -230,31 +231,34 @@ export class FilterOptions {
         const selectedOptions = this.getSelectedOptions(); 
         console.log("Options sélectionnées :", [...selectedOptions]);
     
-        const currentDisplayedRecipes = Array.from(document.querySelectorAll('.card__title'))
-            .map(cardTitle => cardTitle.textContent.toLowerCase());
+        if (selectedOptions.size === 0) {
+            // Aucune option sélectionnée, réinitialiser l'affichage
+            this.resetDisplay(menuCardsWrapper, resultTotalElement);
+        } else {
+            // Filtrer les recettes par les options sélectionnées
+            const varfilteredRecipes = this.filterByOptions(this.menuCards, selectedOptions);
     
-        const varfilteredRecipes = this.filterByOptions(
-            this.menuCards.filter(recipe => currentDisplayedRecipes.includes(recipe.name.toLowerCase())),
-            selectedOptions
-        );
-
-        const cardsContainer = document.querySelector('.cards');
-        cardsContainer.innerHTML = ''; // Efface les cartes précédentes
-        varfilteredRecipes.forEach(recipe => {
-            const card = new ModelCardsTemplate(recipe).createMenuCard();
-            cardsContainer.appendChild(card);
-        });
-
+            // Mise à jour de l'affichage des cartes avec les résultats filtrés
+            renderCards(menuCardsWrapper, varfilteredRecipes, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
     
-        console.log("Recettes après filtrage :", varfilteredRecipes);
+            // Mise à jour du nombre total de résultats
+            updateResultCount(resultTotalElement, varfilteredRecipes.length);
+        }
+        // Mise à jour de l'affichage des cartes
+       // renderCards(menuCardsWrapper, varfilteredRecipes, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
+    
         // Mise à jour du nombre de résultats avec `updateResultCount`
-        updateResultCount(resultTotalElement, varfilteredRecipes.length);
-    
-        // Rend les cartes avec les résultats filtrés
-        renderCards(menuCardsWrapper, varfilteredRecipes, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
+        //updateResultCount(resultTotalElement, varfilteredRecipes.length);
     }
+    //reset du dom
+    resetDisplay(menuCardsWrapper, resultTotalElement) {
+        // Réinitialise l'affichage avec toutes les recettes
+        renderCards(menuCardsWrapper, this.menuCards, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
 
-
+        // Mise à jour du nombre total de résultats
+        updateResultCount(resultTotalElement, this.menuCards.length);
+    }
+ 
    /**
      * Filtre les recettes par les options sélectionnées.
      * @param {Array} recipes - Recettes à filtrer.

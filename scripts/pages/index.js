@@ -59,18 +59,18 @@ class AppMenuCard {
             updateResultCount(this.$resultTotal, this.menuCards.length);;
             
 
-        //définition de $resultTotal
-        document.addEventListener('DOMContentLoaded', () => {
-        const resultTotalElement = document.querySelector('.result__total');
-        const filterOptions = new FilterOptions();
-        filterOptions.$resultTotal = resultTotalElement;
+            //définition de $resultTotal
+            document.addEventListener('DOMContentLoaded', () => {
+            const resultTotalElement = document.querySelector('.result__total');
+            const filterOptions = new FilterOptions();
+            filterOptions.$resultTotal = resultTotalElement;
 
     
 
-    // Initialisation du filtre
-    const dropdown = filterOptions.createDropdown();
-    document.querySelector('.filters').appendChild(dropdown);
-});
+            // Initialisation du filtre
+            const dropdown = filterOptions.createDropdown();
+            document.querySelector('.filters').appendChild(dropdown);
+        });
 
             // Configure les événements pour la recherche et le bouton de réinitialisation
             this.addSearchEvent();
@@ -86,33 +86,50 @@ class AppMenuCard {
      * Configure les événements pour la recherche.
      */
     addSearchEvent() {
-    this.$searchButton.addEventListener('click', () => {
-        // Récupérer la recherche principale
-        const query = this.$searchInput.value.trim();
-        // Récupérer les options sélectionnées
-        const selectedOptions = this.getSelectedOptions();
+        this.$searchButton.addEventListener('click', () => {
+            const query = this.$searchInput.value.trim();
+            const selectedOptions = this.getSelectedOptions();
+            // Gestion des messages d'avertissement pour les requêtes courtes
+            const inputField = document.getElementById('searchBar');
+            let existingWarning = inputField.nextElementSibling;
 
-        // Afficher un message si la recherche est trop courte
-        if (query.length < 3) {
-            console.warn('Veuillez saisir au moins 3 caractères.');
-            updateResultCount(this.$resultTotal, this.menuCards.length);
-            return;
-        }
+            if (existingWarning && existingWarning.textContent === 'Veuillez saisir au moins 3 caractères.') {
+                existingWarning.remove();
+            }
 
-        // Utiliser searchRecipes pour effectuer une recherche combinée
-        const fullyFilteredCards = searchRecipes(
-            this.menuCards, 
-            query, 
-            this.$menuCardsWrapper, 
-            (recipe) => new ModelCardsTemplate(recipe).createMenuCard(), 
-            selectedOptions
-        );
+            const warningMessage = document.createElement('div');
+            warningMessage.textContent = 'Veuillez saisir au moins 3 caractères.';
+            warningMessage.classList.add('warning3c');
 
-        // Mettre à jour les résultats
-        updateResultCount(this.$resultTotal, fullyFilteredCards.length); 
-        this.renderCards(this.$menuCardsWrapper, fullyFilteredCards, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
-    });
-}
+            if (query.length < 3) {
+                inputField.insertAdjacentElement('afterend', warningMessage);
+                console.warn('Veuillez saisir au moins 3 caractères.');
+                
+                // Affiche toutes les recettes si la recherche est vide
+                this.resetDisplay(this.$menuCardsWrapper, this.$resultTotal);
+                
+               // const allRecipes = searchRecipes(this.menuCards, '', this.$menuCardsWrapper, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
+                //this.updateResultCount(allRecipes.length);
+                return;
+            }
+    
+            const fullyFilteredCards = searchRecipes(this.menuCards,query, this.$menuCardsWrapper,
+             (recipe) => new ModelCardsTemplate(recipe).createMenuCard(),selectedOptions
+           );
+    
+            updateResultCount(this.$resultTotal, fullyFilteredCards.length);
+            renderCards(this.$menuCardsWrapper, fullyFilteredCards, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
+        });
+    }
+
+    resetDisplay(menuCardsWrapper, resultTotalElement) {
+        // Réinitialise l'affichage avec toutes les recettes
+        renderCards(menuCardsWrapper, this.menuCards, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
+        
+        // Mise à jour du nombre total de résultats
+        updateResultCount(resultTotalElement, this.menuCards.length);
+        console.warn("reset")
+    }
 
     /**
      * Configure les événements pour le bouton de réinitialisation de l'input.
@@ -132,7 +149,8 @@ class AppMenuCard {
             this.$searchInput.focus();
 
             // Réinitialise l'affichage des cartes et le nombre total de résultats
-            searchRecipes(this.menuCards, '', this.$menuCardsWrapper, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
+          //  renderCards(this.$menuCardsWrapper, this.menuCards, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
+           searchRecipes(this.menuCards, '', this.$menuCardsWrapper, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
             updateResultCount(this.$resultTotal, this.menuCards.length);
         });
     }
@@ -192,6 +210,7 @@ class AppMenuCard {
             };
         });
     }
+    
 
          /**
          * Récupère les options sélectionnées dans les menus déroulants.

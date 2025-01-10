@@ -56,14 +56,14 @@ export function searchRecipes(recipes, query, menuCardsWrapper, cardTemplateCall
         const filterOptions = new FilterOptions();
         varfilteredRecipes = filterOptions.filterByOptions(varfilteredRecipes, selectedOptions);
     }
-    
-   
+
     console.log("Recettes correspondant à la recherche et aux filtres :", varfilteredRecipes);
 
     // Affichage des résultats filtrés
     renderCards(menuCardsWrapper, varfilteredRecipes, cardTemplateCallback);
     return varfilteredRecipes; // Retourne les recettes filtrées
 }
+
   /**
    * Gère l'affichage des cartes dynamiquement de manière fonctionnelle.
    * @param {HTMLElement} menuCardsWrapper - Conteneur des cartes.
