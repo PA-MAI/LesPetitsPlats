@@ -218,7 +218,7 @@ class AppMenuCard {
          */
         getSelectedOptions() {
             const selectedOptions = new Set();
-            document.querySelectorAll('.result-item').forEach(option => {
+            document.querySelectorAll('.result__item').forEach(option => {
                 selectedOptions.add(option.textContent.trim());
             });
             return selectedOptions;
@@ -232,7 +232,7 @@ class AppMenuCard {
         if (resultTotalDiv) {
             const divResult = document.createElement('div');
             divResult.classList.add('result__total--div');
-            //divResult.textContent = "Résultats : "; // Contenu par défaut
+           
     
             // Ajoute la div result__total--div à la div result__total
             resultTotalDiv.appendChild(divResult);

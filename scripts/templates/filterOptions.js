@@ -222,6 +222,7 @@ export class FilterOptions {
             } else if (action === 'remove') {
                 // Soustraire 60px si une option est supprimée
                 cards.style.marginTop = `${Math.max(currentMargin - 60, 0)}px `; 
+               
             }
         }
     }
@@ -233,7 +234,7 @@ export class FilterOptions {
     
         if (selectedOptions.size === 0) {
             // Aucune option sélectionnée, réinitialiser l'affichage
-            this.resetDisplay(menuCardsWrapper, resultTotalElement);
+            location.reload();
         } else {
             // Filtrer les recettes par les options sélectionnées
             const varfilteredRecipes = this.filterByOptions(this.menuCards, selectedOptions);
