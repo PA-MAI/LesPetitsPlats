@@ -18,7 +18,6 @@ class AppMenuCard {
         this.$sectionOptions = document.querySelector('.section__options');
         this.renderCards=renderCards
         this.$clearButton = document.getElementById('clearButton');
-
         this.$resultTotal = document.querySelector('.result__total');// Initialisation de la propriété pour la div des résultats
 
         // Détermine le chemin pour charger les données en fonction de l'environnement
@@ -57,15 +56,12 @@ class AppMenuCard {
 
             // Met à jour le nombre de résultats affichés
             updateResultCount(this.$resultTotal, this.menuCards.length);;
-            
 
             //définition de $resultTotal
             document.addEventListener('DOMContentLoaded', () => {
             const resultTotalElement = document.querySelector('.result__total');
             const filterOptions = new FilterOptions();
             filterOptions.$resultTotal = resultTotalElement;
-
-    
 
             // Initialisation du filtre
             const dropdown = filterOptions.createDropdown();
@@ -87,6 +83,7 @@ class AppMenuCard {
      */
     addSearchEvent() {
         this.$searchButton.addEventListener('click', () => {
+            const filter = new FilterOptions();
             const query = this.$searchInput.value.trim();
             const selectedOptions = this.getSelectedOptions();
             // Gestion des messages d'avertissement pour les requêtes courtes
@@ -106,10 +103,10 @@ class AppMenuCard {
                 console.warn('Veuillez saisir au moins 3 caractères.');
                 
                 // Affiche toutes les recettes si la recherche est vide
-                this.resetDisplay(this.$menuCardsWrapper, this.$resultTotal);
+                filter.resetDisplay(menuCardsWrapper, menuCards);
                 
-               // const allRecipes = searchRecipes(this.menuCards, '', this.$menuCardsWrapper, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
-                //this.updateResultCount(allRecipes.length);
+               const allRecipes = searchRecipes(this.menuCards, '', this.$menuCardsWrapper, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
+                this.updateResultCount(allRecipes.length);
                 return;
             }
     
@@ -122,14 +119,7 @@ class AppMenuCard {
         });
     }
 
-    resetDisplay(menuCardsWrapper, resultTotalElement) {
-        // Réinitialise l'affichage avec toutes les recettes
-        renderCards(menuCardsWrapper, this.menuCards, (recipe) => new ModelCardsTemplate(recipe).createMenuCard());
-        
-        // Mise à jour du nombre total de résultats
-        updateResultCount(resultTotalElement, this.menuCards.length);
-        console.warn("reset")
-    }
+   
 
     /**
      * Configure les événements pour le bouton de réinitialisation de l'input.
@@ -171,21 +161,18 @@ class AppMenuCard {
         const utensils = [...new Set(this.menuCards.flatMap(card => card.ustensils))];
     
         // Création des menus via FilterOptions avec injection des recettes
-        const ingredientMenu = new FilterOptions('ingrédients', ingredients);
+        const ingredientMenu = new FilterOptions('ingrédients', ingredients, this.updateIngredients);
         ingredientMenu.menuCards = this.menuCards; // Injecte les recettes dans le menu des ingrédients
         menuOptionsContainer.appendChild(ingredientMenu.createDropdown());
     
-        const applianceMenu = new FilterOptions('appareils', appliances);
+        const applianceMenu = new FilterOptions('appareils', appliances, this.updateIngredients);
         applianceMenu.menuCards = this.menuCards; // Injecte les recettes dans le menu des appareils
         menuOptionsContainer.appendChild(applianceMenu.createDropdown());
     
-        const utensilMenu = new FilterOptions('ustensiles', utensils);
+        const utensilMenu = new FilterOptions('ustensiles', utensils, this.updateIngredients);
         utensilMenu.menuCards = this.menuCards; // Injecte les recettes dans le menu des ustensiles
         menuOptionsContainer.appendChild(utensilMenu.createDropdown());
-    
-        
         // Ajoute des interactions pour les filtres
-
         [ingredientMenu, applianceMenu, utensilMenu].forEach(menu => {
             menu.addDropdownInteractions = (container, dropdownButton, dropdownList, searchInput) => {
                 dropdownList.addEventListener('click', (e) => {
@@ -209,8 +196,26 @@ class AppMenuCard {
                 });
             };
         });
+
     }
+    updateIngredients(filteredItems) {
+        const dropdown = document.querySelector('.dropdown--ingredients');
+        dropdown.innerHTML = ''; // On vide le menu déroulant actuel
     
+       filteredItems.forEach(item => {
+           if (!ingredientFilter.selectedOptions.has(item)) {  // Ne pas afficher l'ingrédient déjà sélectionné
+               const listItem = document.createElement('li');
+               listItem.textContent = item;
+               dropdown.appendChild(listItem);
+            }
+         });
+            // event suite à selection d' un ingrédient
+        document.querySelector(`dropdown--${this.type}`).addEventListener('change', (e) => {
+        const selectedIngredient = e.target.value;
+        ingredientFilter.addToSelectedOptions(selectedIngredient);
+        });
+        }
+
 
          /**
          * Récupère les options sélectionnées dans les menus déroulants.

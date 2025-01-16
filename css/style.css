@@ -214,7 +214,7 @@ input::placeholder {
     font-size: 14px;
     outline: none;
     display:none;
-    border: 1px 1px 0 0 solid grey;
+    border: 1px solid grey;
     
 }
 
@@ -222,7 +222,7 @@ input::placeholder {
 .clear__icon, .search__icon {
     
     margin-left: 5px;
-    padding-left:-15px;
+    /*padding-left:-15px;*/
     font-size: 18px;
     color:grey;
 }
@@ -244,6 +244,7 @@ input::placeholder {
 .input__container--visible{
     display: block ;
     margin-bottom: 5px;
+    /*height:20px;*/
 
 }
 .clear__icon:hover, .search__icon:hover {
@@ -257,6 +258,8 @@ input::placeholder {
 }
 .dropdown__search--visible {
     display: block ;
+    /*height:18px;*/
+    
 } 
 .dropdown__search--span{
     display: none;

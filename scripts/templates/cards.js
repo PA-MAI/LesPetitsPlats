@@ -1,5 +1,8 @@
 export class ModelCardsTemplate {
     constructor(recipe) {
+        if (!recipe) {
+            throw new Error('Recipe is undefined or nul.');
+        }
         const { id, image, name, servings, ingredients, time, description, appliance, ustensils } = recipe;
         this.id = id;
         this.image = image;

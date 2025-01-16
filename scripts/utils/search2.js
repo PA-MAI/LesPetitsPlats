@@ -23,45 +23,63 @@ export function updateResultCount(resultTotalElement, count) {
  * @param {Function} cardTemplateCallback - Fonction pour créer une carte.
  */
 
-export function searchRecipes(recipes, query, menuCardsWrapper, cardTemplateCallback, selectedOptions) {
-    if (!query || query.length < 3) {
-        console.warn('Veuillez saisir au moins 3 caractères.');
-        renderCards(menuCardsWrapper, recipes, cardTemplateCallback); // Affiche toutes les recettes
-        return recipes; // Retourne toutes les recettes si la recherche est vide
-    }
+export function searchRecipes(recipes, query, menuCardsWrapper, cardTemplateCallback,selectedOptions = []) {
+    const lowerCaseQuery = query.toLowerCase().trim();
+    let filteredRecipes = [];
 
-    const lowerCaseQuery = query.toLowerCase();
-    let varfilteredRecipes = [];
+    // Récupération des options sélectionnées dynamiquement
+    //const selectedOptions = new Set();
+    document.querySelectorAll('.result__item').forEach(option => {
+        const cleanOption = option.textContent.replace('✖', '').trim();
+        selectedOptions.add(cleanOption);
+        console.log("Options récupérées (nettoyées) :", [...selectedOptions]);
+    });
 
-    // Parcours des recettes pour la recherche générale
     for (let i = 0; i < recipes.length; i++) {
         let recipe = recipes[i];
+        let matchesQuery = false;
 
-        if (
+        // Vérification de la correspondance avec la requête
+        if (lowerCaseQuery === '' ||
             recipe.name.toLowerCase().includes(lowerCaseQuery) ||
-            recipe.description.toLowerCase().includes(lowerCaseQuery)
-        ) {
-            varfilteredRecipes.push(recipe);
+            recipe.description.toLowerCase().includes(lowerCaseQuery)) {
+            matchesQuery = true;
         } else {
-            recipe.ingredients.forEach((ingredient) => {
-                if (ingredient.ingredient.toLowerCase().includes(lowerCaseQuery)) {
-                    varfilteredRecipes.push(recipe);
+            // Vérification dans les ingrédients
+            for (let j = 0; j < recipe.ingredients.length; j++) {
+                if (recipe.ingredients[j].ingredient.toLowerCase().includes(lowerCaseQuery)) {
+                    matchesQuery = true;
+                    break;
+                }
+            }
+        }
+
+        // Vérification de la correspondance avec les options sélectionnées
+        let matchesOptions = true;
+        if (selectedOptions.size > 0) {
+            selectedOptions.forEach(option => {
+                const normalizedOption = option.toLowerCase().trim();
+                const ingredientMatch = recipe.ingredients.some(ing => ing.ingredient.toLowerCase().includes(normalizedOption));
+                const applianceMatch = recipe.appliance.toLowerCase().includes(normalizedOption);
+                const utensilMatch = recipe.ustensils.some(ust => ust.toLowerCase().includes(normalizedOption));
+
+                if (!ingredientMatch && !applianceMatch && !utensilMatch) {
+                    matchesOptions = false;
                 }
             });
         }
+
+        // Ajout de la recette si elle correspond à la requête et aux options
+        if (matchesQuery && matchesOptions) {
+            filteredRecipes.push(recipe);
+        }
     }
 
-    // Si des options sont sélectionnées, appliquer un filtrage supplémentaire
-    if (selectedOptions && selectedOptions.size > 0) {
-        const filterOptions = new FilterOptions();
-        varfilteredRecipes = filterOptions.filterByOptions(varfilteredRecipes, selectedOptions);
-    }
+    // Mise à jour du DOM
+    renderCards(menuCardsWrapper, filteredRecipes, cardTemplateCallback);
+    updateResultCount(document.querySelector('.result__total'), filteredRecipes.length);
 
-    console.log("Recettes correspondant à la recherche et aux filtres :", varfilteredRecipes);
-
-    // Affichage des résultats filtrés
-    renderCards(menuCardsWrapper, varfilteredRecipes, cardTemplateCallback);
-    return varfilteredRecipes; // Retourne les recettes filtrées
+    return filteredRecipes;
 }
 
   /**
