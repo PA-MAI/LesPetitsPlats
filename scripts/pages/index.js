@@ -226,6 +226,7 @@ class AppMenuCard {
             document.querySelectorAll('.result__item').forEach(option => {
                 selectedOptions.add(option.textContent.trim());
             });
+            console.log("Options récupérées (nettoyées1) :", [...selectedOptions]);
             return selectedOptions;
         }
         /**

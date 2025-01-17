@@ -283,8 +283,9 @@ input::placeholder {
     z-index: 10;
     max-height:320px;
     transition:  0.4s ease-in-out; 
-    overflow-y: hidden;
+    /*overflow-y: hidden;*/
     transform: translate(0, -5%);
+    overflow-y: scroll;
 
 }
 
@@ -292,6 +293,7 @@ input::placeholder {
     display: block ;
     transition:  0.4s ease-in-out; 
     margin-top: 10px;
+   
 }
 
 .dropdown__item {

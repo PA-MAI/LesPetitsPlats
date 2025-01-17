@@ -233,7 +233,7 @@ export class FilterOptions {
         // Appel à searchRecipes pour filtrer les recettes après ajout de l'option
         const selectedOptions = this.getSelectedOptions();
         console.log("Options sélectionnées  avant:", selectedOptions);
-       const query = document.getElementById('searchInput').value.trim();
+        const query = document.getElementById('searchInput').value.trim();
         searchRecipes(this.menuCards, query, menuCardsWrapper, (recipe) => new ModelCardsTemplate(recipe).createMenuCard(), selectedOptions);
     }
 
@@ -292,6 +292,7 @@ export class FilterOptions {
     // Mettre à jour les cartes selon les options
     updateFilteredCards(menuCardsWrapper, resultTotalElement) {
         const selectedOptions = this.getSelectedOptions(); 
+        
         console.log("Options sélectionnées :", [...selectedOptions]);
     
         if (selectedOptions.size === 0) {
@@ -307,6 +308,7 @@ export class FilterOptions {
     
             // Mise à jour du nombre total de résultats
             updateResultCount(resultTotalElement, varfilteredRecipes.length);
+            
         }
        
         
