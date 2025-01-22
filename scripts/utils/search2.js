@@ -29,11 +29,11 @@ export function searchRecipes(recipes, query, menuCardsWrapper, cardTemplateCall
 
     // Récupération des options sélectionnées dynamiquement
     //const selectedOptions = new Set();
-    document.querySelectorAll('.result__item').forEach(option => {
-        const cleanOption = option.textContent.replace('✖', '').trim();
-        selectedOptions.add(cleanOption);
-        console.log("Options récupérées (nettoyées) :", [...selectedOptions]);
-    });
+    // document.querySelectorAll('.result__item').forEach(option => {
+    //     const cleanOption = option.textContent.replace('✖', '').trim();
+    //     // selectedOptions.add(cleanOption);
+    //     console.log("Options récupérées (nettoyées) :", [...selectedOptions]);
+    // });
 
     for (let i = 0; i < recipes.length; i++) {
         let recipe = recipes[i];
@@ -102,11 +102,11 @@ export function searchRecipes(recipes, query, menuCardsWrapper, cardTemplateCall
         .join(''); // Génère une seule chaîne de HTML
   }
 //----------------fonctuion qui récupère toutes les options sélectionnées. Appeler cette fonction à partir de searchRecipes et d'autres endroits qui en ont besoin.
- export function getSelectedOptions() {
-    const selectedOptions = new Set();
-    document.querySelectorAll('.result__item').forEach(option => {
-        const cleanOption = option.textContent.replace('✖', '').trim();
-        selectedOptions.add(cleanOption);
-    });
-    return selectedOptions;
-}
+//  export function getSelectedOptions() {
+//     const selectedOptions = new Set();
+//     document.querySelectorAll('.result__item').forEach(option => {
+//         const cleanOption = option.textContent.replace('✖', '').trim();
+//         selectedOptions.add(cleanOption);
+//     });
+//     return selectedOptions;
+// }
