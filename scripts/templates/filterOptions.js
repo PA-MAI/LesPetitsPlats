@@ -53,7 +53,7 @@ export class FilterOptions {
 
         const searchIcon = document.createElement('span');
         searchIcon.classList.add('search__icon');
-        searchIcon.innerHTML = '<img src="../assets/logo/ploupe.png">';
+        searchIcon.innerHTML = '<img src="./assets/logo/ploupe.png">';
         inputContainer.appendChild(searchIcon);
 
         // Liste déroulante
@@ -118,7 +118,7 @@ export class FilterOptions {
         resultItem.innerHTML = `${option} <span class="remove-option">✖</span>`;
         resultOptions.appendChild(resultItem);
 
-        // Ajoute l'option sélectionnée à ce menu ET au conteneur global
+        // Ajoute l'option sélectionnée à CE menu ET au conteneur global
         this.selectedOptions.add(option);
         window.allSelectedOptions.add(option);
 
@@ -133,43 +133,60 @@ export class FilterOptions {
             console.log(`Option supprimée : ${option}`);
             console.log('Options globales restantes :', [...window.allSelectedOptions]);
 
-            // Recalculer dynamiquement les recettes affichées
+            // Récupère la recherche principale actuelle
             const query = document.getElementById('searchInput').value.trim();
-            const filteredRecipes = searchRecipes(
-                this.menuCards,
-                query,
-                menuCardsWrapper,
-                (recipe) => new ModelCardsTemplate(recipe).createMenuCard(),
-                window.allSelectedOptions.add(query) // Utilise le conteneur global
-            );
 
-            // Si aucune option globale n'est sélectionnée, réinitialiser complètement
-            if (window.allSelectedOptions.size === 0) {
-                console.log('Toutes les options globales ont été supprimées, réinitialisation...');
-                renderCards(
-                    menuCardsWrapper,
-                    this.menuCards, // Toutes les recettes
-                    (recipe) => new ModelCardsTemplate(recipe).createMenuCard()
-                );
-                filterMenuOptions(this.menuCards); // Réinitialise les menus
-                updateResultCount(document.querySelector('.result__total'), this.menuCards.length);
+            // Si aucune option globale et pas de recherche principale, réinitialiser
+            if ((window.allSelectedOptions.size === 0 && query === '') || (window.allSelectedOptions.size === 0 && query !== '')) {
+                // Si aucune option ET aucune recherche, ou seulement recherche, réinitialiser
+                console.log('Réinitialisation ou recalcul...');
+                if (query === '') {
+                    renderCards(
+                        menuCardsWrapper,
+                        this.menuCards, // Toutes les recettes
+                        (recipe) => new ModelCardsTemplate(recipe).createMenuCard()
+                    );
+                    filterMenuOptions(this.menuCards); // Réinitialise les menus
+                    updateResultCount(document.querySelector('.result__total'), this.menuCards.length);
+                    this.adjustCardsPosition('remove'); // Réinitialise également la marge
+                } else {
+                    // Si seulement une recherche est active, recalculer
+                    const filteredRecipes = searchRecipes(
+                        this.menuCards,
+                        query,
+                        menuCardsWrapper,
+                        (recipe) => new ModelCardsTemplate(recipe).createMenuCard(),
+                        new Set() // Pas d'options sélectionnées
+                    );
+    
+                    this.updateMenusAndCards(filteredRecipes, 'remove');
+                }
                 return;
             }
-
-            // Sinon, mettre à jour les menus et le compteur avec les recettes filtrées
+    
+            // Sinon, recalculer dynamiquement les recettes affichées
+            const filteredRecipes = searchRecipes(
+                this.menuCards,
+                query, // Applique la recherche principale
+                menuCardsWrapper,
+                (recipe) => new ModelCardsTemplate(recipe).createMenuCard(),
+                window.allSelectedOptions // Utilise uniquement les options restantes
+            );
+    
+            // Met à jour les menus et le compteur avec les recettes filtrées
             this.updateMenusAndCards(filteredRecipes, 'remove');
         });
-
+    
         // Filtrer les recettes affichées après ajout de l'option
         const query = document.getElementById('searchInput').value.trim();
         const filteredRecipes = searchRecipes(
             this.menuCards,
-            query,
+            query, // Applique la recherche principale
             menuCardsWrapper,
             (recipe) => new ModelCardsTemplate(recipe).createMenuCard(),
-            window.allSelectedOptions // Utilise le conteneur global
+            window.allSelectedOptions // Utilise uniquement les options sélectionnées
         );
-
+    
         // Met à jour les menus et le compteur avec les nouvelles recettes affichées
         this.updateMenusAndCards(filteredRecipes, 'add');
     }
@@ -251,9 +268,9 @@ export class FilterOptions {
     adjustCardsPosition(action) {
         const cards = document.querySelector('.cards');
         if (!cards) return; // Si `.cards` n'existe pas, ne rien faire
-
+    
         const currentMargin = parseInt(cards.style.marginTop || 0, 10);
-
+    
         if (action === 'add') {
             // Ajouter 60px si une option est ajoutée
             cards.style.marginTop = `${currentMargin + 60}px`;
