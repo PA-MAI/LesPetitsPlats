@@ -87,15 +87,18 @@ class AppMenuCard {
     this.$searchButton.addEventListener('click', () => {
         const query = this.$searchInput.value.trim();
 
-        // Récupère les options sélectionnées à partir de FilterOptions
-        this.filterOptions = new FilterOptions()
-        const selectedOptions = this.filterOptions.getSelectedOptions();
+        // Construire correctement l'ensemble des options sélectionnées
+        const selectedOptions = new Set();
+        if (window.filterMenus) {
+            [...window.filterMenus.ingredientMenu.selectedOptions].forEach(option => selectedOptions.add(option));
+            [...window.filterMenus.applianceMenu.selectedOptions].forEach(option => selectedOptions.add(option));
+            [...window.filterMenus.utensilMenu.selectedOptions].forEach(option => selectedOptions.add(option));
+        }
 
-        // Gestion des messages d'avertissement pour les requêtes courtes
+        // Gestion des requêtes trop courtes
         const inputField = document.getElementById('searchBar');
         let existingWarning = inputField.nextElementSibling;
 
-        // Supprime l'avertissement existant si présent
         if (existingWarning && existingWarning.textContent === 'Veuillez saisir au moins 3 caractères.') {
             existingWarning.remove();
         }
@@ -104,12 +107,10 @@ class AppMenuCard {
         warningMessage.textContent = 'Veuillez saisir au moins 3 caractères.';
         warningMessage.classList.add('warning3c');
 
-        // Si la recherche est trop courte, affiche un avertissement et toutes les recettes
         if (query.length < 3) {
             inputField.insertAdjacentElement('afterend', warningMessage);
-            console.warn('Veuillez saisir au moins 3 caractères.');
 
-            // Affiche toutes les recettes si la recherche est vide
+            // Affiche toutes les recettes si la recherche est trop courte
             const allRecipes = searchRecipes(
                 this.menuCards,
                 '',
@@ -117,13 +118,14 @@ class AppMenuCard {
                 (recipe) => new ModelCardsTemplate(recipe).createMenuCard()
             );
 
-            // Filtrer les menus et arrêter l'exécution
+            // Met à jour les menus et le compteur
             filterMenuOptions(allRecipes);
+            updateResultCount(this.$resultTotal, this.menuCards.length);
             return;
         }
 
-        // Effectue une recherche filtrée avec les options sélectionnées
-        const fullyFilteredCards = searchRecipes(
+        // Recherche avec la requête et les options sélectionnées
+        const filteredRecipes = searchRecipes(
             this.menuCards,
             query,
             this.$menuCardsWrapper,
@@ -131,21 +133,11 @@ class AppMenuCard {
             selectedOptions
         );
 
-        // Met à jour le compteur de résultats
-        updateResultCount(this.$resultTotal, fullyFilteredCards.length);
-
-        // Affiche les cartes filtrées
-        renderCards(
-            this.$menuCardsWrapper,
-            fullyFilteredCards,
-            (recipe) => new ModelCardsTemplate(recipe).createMenuCard()
-        );
-
-        // Met à jour les options des menus déroulants
-        filterMenuOptions(fullyFilteredCards);
+        // Met à jour les menus et le compteur
+        filterMenuOptions(filteredRecipes);
+        updateResultCount(this.$resultTotal, filteredRecipes.length);
     });
 }
-
 
   /**
    * Configure les événements pour le bouton de réinitialisation de l'input.

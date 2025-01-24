@@ -344,7 +344,7 @@ input::placeholder {
     height:50px;
     font-family: var(--font-family-title);
     font-size: 21px;
-    margin-top: 20px;
+    margin-top: 10px;
     margin-right: 40px;
 }
 
