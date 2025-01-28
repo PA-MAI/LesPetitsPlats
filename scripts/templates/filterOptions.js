@@ -8,8 +8,8 @@ import {
 } from '../utils/search1.js';
 
 /**
-* Classe pour gérer les filtres et les recherches
-*/
+ * Classe pour gérer les filtres et les recherches
+ */
 export class FilterOptions {
     constructor(type, items, menuCards) {
         this.type = type; // Type du menu (e.g., ingrédients, appareils, ustensiles)
@@ -34,6 +34,11 @@ export class FilterOptions {
         dropdownButton.classList.add('dropdown__button');
         dropdownButton.setAttribute('aria-expanded', 'false');
         dropdownButton.textContent = `${this.type}`;
+        const icon = document.createElement('i');
+        icon.classList.add('fa-solid');
+        icon.classList.add('fa-chevron-down');
+    
+        dropdownButton.append(icon);
         dropdownContainer.appendChild(dropdownButton);
 
         // Conteneur de recherche
@@ -86,9 +91,11 @@ export class FilterOptions {
             this.selectedOptions.add(item);
             this.addToResultOptions(item);
             this.updateDropdownItems();
+
         });
 
         this.dropdownList.appendChild(listItem);
+       
     }
 
     // Mise à jour des items dans le menu déroulant
@@ -159,12 +166,12 @@ export class FilterOptions {
                         (recipe) => new ModelCardsTemplate(recipe).createMenuCard(),
                         new Set() // Pas d'options sélectionnées
                     );
-    
+
                     this.updateMenusAndCards(filteredRecipes, 'remove');
                 }
                 return;
             }
-    
+
             // Sinon, recalculer dynamiquement les recettes affichées
             const filteredRecipes = searchRecipes(
                 this.menuCards,
@@ -173,11 +180,11 @@ export class FilterOptions {
                 (recipe) => new ModelCardsTemplate(recipe).createMenuCard(),
                 window.allSelectedOptions // Utilise uniquement les options restantes
             );
-    
+
             // Met à jour les menus et le compteur avec les recettes filtrées
             this.updateMenusAndCards(filteredRecipes, 'remove');
         });
-    
+
         // Filtrer les recettes affichées après ajout de l'option
         const query = document.getElementById('searchInput').value.trim();
         const filteredRecipes = searchRecipes(
@@ -187,31 +194,25 @@ export class FilterOptions {
             (recipe) => new ModelCardsTemplate(recipe).createMenuCard(),
             window.allSelectedOptions // Utilise uniquement les options sélectionnées
         );
-    
+
         // Met à jour les menus et le compteur avec les nouvelles recettes affichées
         this.updateMenusAndCards(filteredRecipes, 'add');
     }
 
-    getRecipesFromCards() {
-        const displayedCards = Array.from(document.querySelectorAll('.cards .card'));
-
-        // Si des cartes sont affichées, retourne les recettes correspondantes
-        if (displayedCards.length > 0) {
-            return displayedCards.map(card => {
-                const recipeId = card.getAttribute('data-id'); // Supposez que chaque carte a un attribut `data-id`
-                return this.menuCards.find(recipe => recipe.id === parseInt(recipeId, 10));
-            }).filter(Boolean); // Filtrer les recettes valides
+    
+    chevronInteraction(dropdownButton) {
+        const icon = dropdownButton.querySelector('.fa-solid'); // Cible l'icône du bouton actuel
+        const isExpanded = dropdownButton.getAttribute('aria-expanded') === 'true';
+    
+        if (isExpanded) {
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-up'); // Chevron bas
+        } else {
+            icon.classList.remove('fa-chevron-up');
+            icon.classList.add('fa-chevron-down'); // Chevron haut
         }
-
-        // Si aucune carte n'est visible, utiliser les options sélectionnées pour filtrer
-        return searchRecipes(
-            this.menuCards,
-            '', // Pas de recherche principale
-            document.querySelector('.cards'),
-            () => {}, // Aucun rendu direct des cartes
-            this.selectedOptions // Utiliser uniquement les options sélectionnées
-        );
     }
+    
     // Gestion des interactions css pour les menus
     addDropdownInteractions(container, dropdownButton, dropdownList, searchInput, inputContainer, clearIcon) {
         // Ouverture/fermeture du menu
@@ -223,6 +224,10 @@ export class FilterOptions {
             inputContainer.classList.toggle('input__container--visible', !isExpanded);
             searchInput.classList.toggle('dropdown__search--visible', !isExpanded);
             dropdownButton.classList.toggle('dropdown__button--selected', !isExpanded);
+
+            // Change la direction de l'icône
+            this.chevronInteraction(dropdownButton)
+
         });
 
         // Filtrage des items dans le menu
@@ -249,14 +254,20 @@ export class FilterOptions {
                 inputContainer.classList.remove('input__container--visible');
                 searchInput.classList.remove('dropdown__search--visible');
                 dropdownButton.classList.remove('dropdown__button--selected');
+                dropdownButton.setAttribute('aria-expanded', 'false'); // Ferme le menu
+                dropdownButton.setAttribute('aria-expanded', 'false'); // Ferme le menu
+                // Change la direction de l'icône
+                this.chevronInteraction(dropdownButton)
+        
             }
+            
         });
     }
     //centralisation des actions sur les menus déroulants
     updateMenusAndCards(filteredRecipes, action) {
         // Mise à jour des menus déroulants
         filterMenuOptions(filteredRecipes);
-
+        
         // Mise à jour du compteur
         const resultTotalElement = document.querySelector('.result__total');
         updateResultCount(resultTotalElement, filteredRecipes.length);
@@ -269,9 +280,9 @@ export class FilterOptions {
     adjustCardsPosition(action) {
         const cards = document.querySelector('.cards');
         if (!cards) return; // Si `.cards` n'existe pas, ne rien faire
-    
+
         const currentMargin = parseInt(cards.style.marginTop || 0, 10);
-    
+
         if (action === 'add') {
             // Ajouter 60px si une option est ajoutée
             cards.style.marginTop = `${currentMargin + 60}px`;

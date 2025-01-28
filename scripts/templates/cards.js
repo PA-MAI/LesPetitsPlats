@@ -3,7 +3,17 @@ export class ModelCardsTemplate {
         if (!recipe) {
             throw new Error('Recipe is undefined or nul.');
         }
-        const { id, image, name, servings, ingredients, time, description, appliance, ustensils } = recipe;
+        const {
+            id,
+            image,
+            name,
+            servings,
+            ingredients,
+            time,
+            description,
+            appliance,
+            ustensils
+        } = recipe;
         this.id = id;
         this.image = image;
         this.name = name;
@@ -14,18 +24,18 @@ export class ModelCardsTemplate {
         this.appliance = appliance;
         this.ustensils = ustensils;
     }
-  
+
     createMenuCard() {
         const $wrapper = document.createElement('div');
         $wrapper.classList.add('card__section--wrapper');
-  
+
         const ingredientsHtml = this.ingredients.map((ing) => {
             const qty = ing.quantity ? ` ${ing.quantity}` : '';
             const unit = ing.unit ? ` ${ing.unit}` : '';
             return `<div class="ingredient"><span>${ing.ingredient}</span><br>
             <span class="qtyunit">${qty}${unit}</span></div>`;
         }).join('');
-  
+
         $wrapper.innerHTML = `
             <article class="card">
             
@@ -46,4 +56,4 @@ export class ModelCardsTemplate {
         `;
         return $wrapper;
     }
-  }
+}

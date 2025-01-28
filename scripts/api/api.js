@@ -1,13 +1,13 @@
 class Api {
     /**
-     * Constructor for the Api class
+     * Constructor pour la class Api 
      * @param {string} url - The URL to fetch data from
      */
     constructor(url) {
-        this._url = url; // Store the URL as a private variable
+        this._url = url; // stocke l' URL dans une variable privée
     }
 
-    // Method to fetch data from the specified URL
+    // methode fetch data pour cette URL
     async get() {
         try {
             const response = await fetch(this._url);
@@ -15,7 +15,7 @@ class Api {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            console.log('Fetched data:', data); // Ajoutez ceci pour vérifier la structure
+            console.log('Fetched data:', data); //  vérifie la structure
             return data;
         } catch (err) {
             console.error('An error occurred while fetching data:', err);
