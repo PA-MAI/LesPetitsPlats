@@ -50,7 +50,7 @@ export function searchRecipes(recipes, query, menuCardsWrapper, cardTemplateCall
     });
 
     // Mise à jour du DOM
-    renderCards(menuCardsWrapper, filteredRecipes, cardTemplateCallback);
+    renderCards(menuCardsWrapper, filteredRecipes, cardTemplateCallback, query);
     updateResultCount(document.querySelector('.result__total'), filteredRecipes.length);
 
     return filteredRecipes;
@@ -61,11 +61,11 @@ export function searchRecipes(recipes, query, menuCardsWrapper, cardTemplateCall
  * @param {Array} recipes - Les recettes à afficher.
  * @param {Function} cardTemplateCallback - Fonction pour créer une carte.
  */
-export function renderCards(menuCardsWrapper, recipes, cardTemplateCallback) {
+export function renderCards(menuCardsWrapper, recipes, cardTemplateCallback, query) {
     menuCardsWrapper.innerHTML = ''; // Réinitialise le conteneur
-
+   
     if (recipes.length === 0) {
-        menuCardsWrapper.innerHTML = '<p class="warn__message">Aucune recette trouvée!</p>';
+        menuCardsWrapper.innerHTML = '<p class="warn__message"> Aucune recette ne contient \'' + query + '\' vous pouvez chercher tarte aux pommes , poisson , etc... </p>';
         return;
     }
 
