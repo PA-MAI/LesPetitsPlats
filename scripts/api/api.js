@@ -7,7 +7,7 @@ class Api {
         this._url = url; 
     }
 
-    // Method fetch data de l' URL specifiée
+    // Method fetch data de l'URL specifiée
     async get() {
         try {
             const response = await fetch(this._url);

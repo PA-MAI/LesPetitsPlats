@@ -14,7 +14,7 @@ export class ModelCardsTemplate {
         this.appliance = appliance;
         this.ustensils = ustensils;
     }
-  
+  //Injection Dom des cartes de recettes
     createMenuCard() {
         const $wrapper = document.createElement('div');
         $wrapper.classList.add('card__section--wrapper');

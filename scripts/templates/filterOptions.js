@@ -323,7 +323,7 @@ export function filterMenuOptions(menuCards) {
     const selectedAppliances = window.filterMenus.applianceMenu ? [...window.filterMenus.applianceMenu.selectedOptions] : [];
     const selectedUtensils = window.filterMenus.utensilMenu ? [...window.filterMenus.utensilMenu.selectedOptions] : [];
 
-    // Calculer les options restantes dans les recettes affichées
+    // Calcule les options restantes dans les recettes affichées
     const ingredients = [...new Set(
         menuCards.flatMap(card => card.ingredients.map(ing => ing.ingredient))
     )].filter(ingredient => !selectedIngredients.includes(ingredient));
