@@ -24,7 +24,7 @@ export class ModelCardsTemplate {
         this.appliance = appliance;
         this.ustensils = ustensils;
     }
-
+    // injection Dom des cartes de recettes
     createMenuCard() {
         const $wrapper = document.createElement('div');
         $wrapper.classList.add('card__section--wrapper');
@@ -38,7 +38,6 @@ export class ModelCardsTemplate {
 
         $wrapper.innerHTML = `
             <article class="card">
-            
                 <div class="card__menu">
                     <img class="card__img" alt="${this.name}" src="./assets/img/${this.image}">
                     <div class="temps">${this.time} min</div>
@@ -49,9 +48,7 @@ export class ModelCardsTemplate {
                     <span class="card__description">${this.description}</span>
                     <h3>INGR&Eacute;DIENTS</h3>
                     <ul>${ingredientsHtml}</ul>
-                    
                 </div>
-                
             </article>
         `;
         return $wrapper;

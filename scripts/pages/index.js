@@ -31,7 +31,7 @@ class AppMenuCard {
         this.$clearButton = document.getElementById('clearButton')
         this.$resultTotal = document.querySelector('.result__total') // Initialisation de la propriété pour la div des résultats
         this.filterOptions = new FilterOptions();
-        //this.updateMenusAndCards = new FilterOptions.updateMenusAndCards()
+        
         // Détermine le chemin pour charger les données en fonction de l'environnement
         const basePath = window.location.pathname.includes('/LesPetitsPlats/') ? '/LesPetitsPlats/data/' : './data/'
         this.menuCardsApi = new ApiMenuCards(`${ basePath }recipe.json`) // Instance de l'API pour récupérer les recettes
@@ -86,7 +86,7 @@ class AppMenuCard {
      * Configure les événements pour la recherche.
      */
     addSearchEvent() {
-        //const searchInput = document.querySelector('#searchInput');
+        
         this.$searchButton.addEventListener('click', () => {
             const query = this.$searchInput.value.trim();
 

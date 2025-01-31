@@ -1,13 +1,13 @@
 class Api {
     /**
      * Constructor pour la class Api 
-     * @param {string} url - The URL to fetch data from
+     * @param {string} url 
      */
     constructor(url) {
         this._url = url; // stocke l' URL dans une variable privée
     }
 
-    // methode fetch data pour cette URL
+    // methode fetch data pour l'URL specifiée
     async get() {
         try {
             const response = await fetch(this._url);

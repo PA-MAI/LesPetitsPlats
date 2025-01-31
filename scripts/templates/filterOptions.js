@@ -185,7 +185,7 @@ export class FilterOptions {
             this.updateMenusAndCards(filteredRecipes, 'remove');
         });
 
-        // Filtrer les recettes affichées après ajout de l'option
+        // Filtre les recettes affichées après ajout de l'option
         const query = document.getElementById('searchInput').value.trim();
         const filteredRecipes = searchRecipes(
             this.menuCards,
@@ -284,7 +284,7 @@ export class FilterOptions {
         const currentMargin = parseInt(cards.style.marginTop || 0, 10);
 
         if (action === 'add') {
-            // Ajouter 60px si une option est ajoutée
+            // Ajoute 60px si une option est ajoutée
             cards.style.marginTop = `${currentMargin + 60}px`;
         } else if (action === 'remove') {
             // Soustraire 60px mais s'assurer que la marge ne devient pas négative
@@ -318,12 +318,12 @@ export function filterMenuOptions(menuCards) {
         menuOptionsContainer.appendChild(window.filterMenus.utensilMenu.createDropdown());
     }
 
-    // Récupérer les options déjà sélectionnées
+    // Récupére les options déjà sélectionnées
     const selectedIngredients = window.filterMenus.ingredientMenu ? [...window.filterMenus.ingredientMenu.selectedOptions] : [];
     const selectedAppliances = window.filterMenus.applianceMenu ? [...window.filterMenus.applianceMenu.selectedOptions] : [];
     const selectedUtensils = window.filterMenus.utensilMenu ? [...window.filterMenus.utensilMenu.selectedOptions] : [];
 
-    // Calculer les options restantes dans les recettes affichées
+    // Calcule les options restantes dans les recettes affichées
     const ingredients = [...new Set(
         menuCards.flatMap(card => card.ingredients.map(ing => ing.ingredient))
     )].filter(ingredient => !selectedIngredients.includes(ingredient));
