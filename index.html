@@ -4,64 +4,55 @@
     <meta name="description" content="Recettes de cuisine">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="icon" type="image/svg+xml" href="./assets/logo/Logo.svg">
-  <title>Les petits plats - Recettes de cuisine</title>
-  
-  <link href="./css/style.css" rel="stylesheet" type="text/css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Manrope&display=swap" rel="stylesheet">
-  <script  src="./scripts/api/api.js" type="module"></script>
-  <script  src="./scripts/templates/cards.js" type="module"></script>
-  <script  src="./scripts/utils/search1.js" type="module"></script>
-  <script  src="./scripts/templates/filterOptions.js" type="module"></script>
-  <script  src="./scripts/pages/index.js" type="module"></script>
-   </head>
+    <link rel="icon" type="image/svg+xml" href="./assets/logo/Logo.svg">
+    <title>Les petits plats - Recettes de cuisine</title>
+    <link href="./css/style.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope&display=swap" rel="stylesheet">
+    <script src="./scripts/api/api.js" type="module"></script>
+    <script src="./scripts/templates/cards.js" type="module"></script>
+    <script src="./scripts/utils/search1.js" type="module"></script>
+    <script src="./scripts/templates/filterOptions.js" type="module"></script>
+    <script src="./scripts/pages/index.js" type="module"></script>
+  </head>
   <body>
-
     <header class="header">
-    	<a href="./index.html" class="header__logo">
-        <img src="./assets/logo/Logo.svg" title="Logo du site Les petits plats"  alt="" type="image/svg+xml">
+      <a href="./index.html" class="header__logo">
+        <img src="./assets/logo/Logo.svg" title="Logo du site Les petits plats" alt="">
       </a>
-	    <div class="search__section">
-		    <h1 class="search__section--title">CHERCHEZ PARMI PLUS DE 1500 RECETTES <br /> DU QUOTIDIEN, SIMPLES ET DÉLICIEUSES</h1>
-        <section class="search__bar" id="searchBar">
+      <div class="search__section">
+        <h1 class="search__section--title">CHERCHEZ PARMI PLUS DE 1500 RECETTES <br> DU QUOTIDIEN, SIMPLES ET DÉLICIEUSES </h1>
+        <div class="search__bar" id="searchBar">
           <input type="text" id="searchInput" placeholder="Rechercher une recette, un ingrédient,..." name="search">
           <button id="clearButton" class="clear-button" style="display: none;">✖</button>
           <div class="search__bar--button">
             <button type="button" id="searchButton">
-              <img src="./assets/logo/search-buttonw.svg" class="search-icon normal"alt="Search">
-              <img src="./assets/logo/search-buttonb.svg" class="search-icon hover"alt="Search">
+              <img src="./assets/logo/search-buttonw.svg" class="search-icon normal" alt="Search">
+              <img src="./assets/logo/search-buttonb.svg" class="search-icon hover" alt="Search">
             </button>
           </div>
-        </section>
-	    </div>
-  </header>
-  
-<main id="main">
-	<section class="section__options">
-    <!-- injection des menus d'options -->
-    <div class="section__options--menu">
-      <div class="menu__options">
-        
-        <div id="dropdown-container"></div>
+        </div>
       </div>
-      <div class="result__options"></div>
-      <!-- injection des options -->
-    </div>
-    <div class="result__total"></div>
-    <!-- injection du nombre total des recettes -->
-    </section>
-
-  
-    <section class="cards">
-	  <!-- injection des cards de recettes -->
-    </section>
-  </main>
-
-
-</body>
-
- </html>
+    </header>
+    <main id="main">
+      <div class="section__options">
+        <!-- injection des menus d'options -->
+        <div class="section__options--menu">
+          <div class="menu__options">
+            <div id="dropdown-container"></div>
+          </div>
+          <div class="result__options"></div>
+          <!-- injection des options -->
+        </div>
+        <div class="result__total"></div>
+        <!-- injection du nombre total des recettes -->
+      </div>
+      <div class="cards">
+        <!-- injection des cards de recettes -->
+      </div>
+    </main>
+  </body>
+</html>
