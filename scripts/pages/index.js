@@ -117,8 +117,7 @@ class AppMenuCard {
                 const allRecipes = searchRecipes(
                     this.menuCards,
                     '',
-                    this.$menuCardsWrapper,
-                    (recipe) => new ModelCardsTemplate(recipe).createMenuCard()
+                 
                 );
 
                 // Met à jour les menus et le compteur
