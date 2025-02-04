@@ -90,7 +90,7 @@ class AppMenuCard {
         this.$searchButton.addEventListener('click', () => {
             const query = this.$searchInput.value.trim();
 
-            // Construire l'ensemble des options sélectionnées
+            // Construit l'ensemble des options sélectionnées
             const selectedOptions = new Set();
             if (window.filterMenus) {
                 [...window.filterMenus.ingredientMenu.selectedOptions].forEach(option => selectedOptions.add(option));
@@ -113,13 +113,12 @@ class AppMenuCard {
             if (query.length < 3) {
                 inputField.insertAdjacentElement('afterend', warningMessage);
 
-                // Affiche toutes les recettes si la recherche est trop courte
+                
                 const allRecipes = searchRecipes(
-                    this.menuCards,
-                    '',
-                    this.$menuCardsWrapper,
-                    (recipe) => new ModelCardsTemplate(recipe).createMenuCard()
-                );
+                   this.menuCards,
+                   '',
+                 
+               );
 
                 // Met à jour les menus et le compteur
                 filterMenuOptions(allRecipes);
