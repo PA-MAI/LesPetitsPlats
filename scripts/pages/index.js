@@ -113,12 +113,7 @@ class AppMenuCard {
             if (query.length < 3) {
                 inputField.insertAdjacentElement('afterend', warningMessage);
 
-                // Affiche toutes les recettes si la recherche est trop courte
-                const allRecipes = searchRecipes(
-                    this.menuCards,
-                    '',
-                 
-                );
+                const allRecipes = searchRecipes(this.menuCards,'',);
 
                 // Met à jour les menus et le compteur
                 filterMenuOptions(allRecipes);
