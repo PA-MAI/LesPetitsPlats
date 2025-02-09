@@ -81,6 +81,8 @@ export class FilterOptions {
 
     // Ajout dynamique d'un item au menu
     addDropdownItem(item) {
+        if ([...this.dropdownList.children].some(li => li.textContent.toLowerCase() === item.toLowerCase())) return; // 🔥 Vérifie si déjà présent
+
         const listItem = document.createElement('li');
         listItem.classList.add('dropdown__item');
         listItem.textContent = item;
@@ -101,14 +103,14 @@ export class FilterOptions {
     // Mise à jour des items dans le menu déroulant
     updateDropdownItems() {
         console.log('Mise à jour des items du menu déroulant pour', this.type);
-
+    
         // Supprime les items déjà affichés
-        const existingItems = Array.from(this.dropdownList.querySelectorAll('.dropdown__item'));
-        existingItems.forEach(item => item.remove());
-
-        // Recrée uniquement les items non sélectionnés
-        this.items
-            .filter(item => !this.selectedOptions.has(item))
+        this.dropdownList.innerHTML = '';
+    
+        // Supprime les doublons, trie, puis recrée les éléments
+        const uniqueItems = [...new Set(this.items)].sort();
+        uniqueItems
+            .filter(item => !this.selectedOptions.has(item.toLowerCase()))
             .forEach(item => this.addDropdownItem(item));
     }
 
@@ -317,6 +319,8 @@ export function filterMenuOptions(menuCards) {
         menuOptionsContainer.appendChild(window.filterMenus.applianceMenu.createDropdown());
         menuOptionsContainer.appendChild(window.filterMenus.utensilMenu.createDropdown());
     }
+    // Normalise et évite les doublons avec Set + tri pour meilleure lisibilité
+    const normalize = (arr) => [...new Set(arr.map(item => item.toLowerCase()))].sort();
 
     // Récupérer les options déjà sélectionnées
     const selectedIngredients = window.filterMenus.ingredientMenu ? [...window.filterMenus.ingredientMenu.selectedOptions] : [];
@@ -324,15 +328,17 @@ export function filterMenuOptions(menuCards) {
     const selectedUtensils = window.filterMenus.utensilMenu ? [...window.filterMenus.utensilMenu.selectedOptions] : [];
 
     // Calcule les options restantes dans les recettes affichées
-    const ingredients = [...new Set(
-        menuCards.flatMap(card => card.ingredients.map(ing => ing.ingredient))
-    )].filter(ingredient => !selectedIngredients.includes(ingredient));
 
-    const appliances = [...new Set(menuCards.map(card => card.appliance))]
+  // Extraction et nettoyage des options disponibles
+    const ingredients = normalize(menuCards.flatMap(card => card.ingredients.map(ing => ing.ingredient)))
+        .filter(ingredient => !selectedIngredients.includes(ingredient));
+
+    const appliances = normalize(menuCards.map(card => card.appliance))
         .filter(appliance => !selectedAppliances.includes(appliance));
 
-    const utensils = [...new Set(menuCards.flatMap(card => card.ustensils))]
+    const utensils = normalize(menuCards.flatMap(card => card.ustensils))
         .filter(utensil => !selectedUtensils.includes(utensil));
+
 
     // Mise à jour des menus existants
     window.filterMenus.ingredientMenu.items = ingredients;
