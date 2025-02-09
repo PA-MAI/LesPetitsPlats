@@ -89,50 +89,48 @@ class AppMenuCard {
         
         this.$searchButton.addEventListener('click', () => {
             const query = this.$searchInput.value.trim();
-
-            // Construire correctement l'ensemble des options sélectionnées
+            const queryRegExp = /^[a-zA-Z%\s-]+$/;// Autorise lettres, espaces , % et le -
+    
+            // Sélection des options
             const selectedOptions = new Set();
             if (window.filterMenus) {
                 [...window.filterMenus.ingredientMenu.selectedOptions].forEach(option => selectedOptions.add(option));
                 [...window.filterMenus.applianceMenu.selectedOptions].forEach(option => selectedOptions.add(option));
                 [...window.filterMenus.utensilMenu.selectedOptions].forEach(option => selectedOptions.add(option));
             }
-
-            // Gestion des requêtes trop courtes
+    
+            // Gestion des erreurs
             const inputField = document.getElementById('searchBar');
             let existingWarning = inputField.nextElementSibling;
-
-            if (existingWarning && existingWarning.textContent === 'Veuillez saisir au moins 3 caractères.') {
-                existingWarning.remove();
-            }
-
-            const warningMessage = document.createElement('div');
-            warningMessage.textContent = 'Veuillez saisir au moins 3 caractères.';
-            warningMessage.classList.add('warning3c');
-
+    
+            if (existingWarning) existingWarning.remove(); // Supprime tout ancien message
+    
             if (query.length < 3) {
+                const warningMessage = document.createElement('div');
+                warningMessage.textContent = 'Veuillez saisir au moins 3 caractères.';
+                warningMessage.classList.add('warning3c');
                 inputField.insertAdjacentElement('afterend', warningMessage);
-
-                const allRecipes = searchRecipes(this.menuCards,'',);
-
-                // Met à jour les menus et le compteur
-                filterMenuOptions(allRecipes);
-                updateResultCount(this.$resultTotal, this.menuCards.length);
-                return;
+    
+            } else if (!queryRegExp.test(query)) {
+                const warningInjectMessage = document.createElement('div');
+                warningInjectMessage.textContent = 'Caractères invalides!';
+                warningInjectMessage.classList.add('warning3c');
+                inputField.insertAdjacentElement('afterend', warningInjectMessage);
+    
+            } else {
+                // Exécuter la recherche uniquement si les critères sont respectés
+                const filteredRecipes = searchRecipes(
+                    this.menuCards,
+                    query,
+                    this.$menuCardsWrapper,
+                    (recipe) => new ModelCardsTemplate(recipe).createMenuCard(),
+                    selectedOptions
+                );
+    
+                // Mise à jour des menus et du compteur
+                filterMenuOptions(filteredRecipes);
+                updateResultCount(this.$resultTotal, filteredRecipes.length);
             }
-
-            // Recherche avec la requête et les options sélectionnées
-            const filteredRecipes = searchRecipes(
-                this.menuCards,
-                query,
-                this.$menuCardsWrapper,
-                (recipe) => new ModelCardsTemplate(recipe).createMenuCard(),
-                selectedOptions
-            );
-
-            // Met à jour les menus et le compteur
-            filterMenuOptions(filteredRecipes);
-            updateResultCount(this.$resultTotal, filteredRecipes.length);
         });
     }
 

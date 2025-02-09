@@ -67,6 +67,7 @@
     font-size: 16px;
     font-family: var(--font-family-text);
   }
+  
   .search__bar input:focus {
     outline: none;
     border: none;

@@ -81,17 +81,17 @@ export class FilterOptions {
 
     // Ajout dynamique d'un item au menu
     addDropdownItem(item) {
+        if ([...this.dropdownList.children].some(li => li.textContent.toLowerCase() === item.toLowerCase())) return; // 🔥 Vérifie si déjà présent
+
         const listItem = document.createElement('li');
         listItem.classList.add('dropdown__item');
         listItem.textContent = item;
-
-        // Ajouter l'événement de sélection
+    
         listItem.addEventListener('click', () => {
             console.log(`${item} sélectionné dans ${this.type}`);
             this.selectedOptions.add(item);
             this.addToResultOptions(item);
             this.updateDropdownItems();
-
         });
 
         this.dropdownList.appendChild(listItem);
@@ -107,10 +107,12 @@ export class FilterOptions {
         existingItems.forEach(item => item.remove());
 
         // Recrée uniquement les items non sélectionnés
-        this.items
-            .filter(item => !this.selectedOptions.has(item))
-            .forEach(item => this.addDropdownItem(item));
+        const uniqueItems = [...new Set(this.items)].sort();
+        uniqueItems
+        .filter(item => !this.selectedOptions.has(item.toLowerCase()))
+        .forEach(item => this.addDropdownItem(item));
     }
+    
 
     // Ajoute une option sélectionnée aux résultats et met à jour les cartes
     addToResultOptions(option) {
@@ -317,6 +319,8 @@ export function filterMenuOptions(menuCards) {
         menuOptionsContainer.appendChild(window.filterMenus.applianceMenu.createDropdown());
         menuOptionsContainer.appendChild(window.filterMenus.utensilMenu.createDropdown());
     }
+    //  Normaliser et éviter les doublons avec Set + tri pour meilleure lisibilité
+    const normalize = (arr) => [...new Set(arr.map(item => item.toLowerCase()))].sort();
 
     // Récupére les options déjà sélectionnées
     const selectedIngredients = window.filterMenus.ingredientMenu ? [...window.filterMenus.ingredientMenu.selectedOptions] : [];
@@ -324,14 +328,14 @@ export function filterMenuOptions(menuCards) {
     const selectedUtensils = window.filterMenus.utensilMenu ? [...window.filterMenus.utensilMenu.selectedOptions] : [];
 
     // Calcule les options restantes dans les recettes affichées
-    const ingredients = [...new Set(
-        menuCards.flatMap(card => card.ingredients.map(ing => ing.ingredient))
-    )].filter(ingredient => !selectedIngredients.includes(ingredient));
+    // Extraction et nettoyage des options disponibles
+    const ingredients = normalize(menuCards.flatMap(card => card.ingredients.map(ing => ing.ingredient)))
+        .filter(ingredient => !selectedIngredients.includes(ingredient));
 
-    const appliances = [...new Set(menuCards.map(card => card.appliance))]
+    const appliances = normalize(menuCards.map(card => card.appliance))
         .filter(appliance => !selectedAppliances.includes(appliance));
 
-    const utensils = [...new Set(menuCards.flatMap(card => card.ustensils))]
+    const utensils = normalize(menuCards.flatMap(card => card.ustensils))
         .filter(utensil => !selectedUtensils.includes(utensil));
 
     // Mise à jour des menus existants
