@@ -81,17 +81,20 @@ export class FilterOptions {
 
     // Ajout dynamique d'un item au menu
     addDropdownItem(item) {
-        if ([...this.dropdownList.children].some(li => li.textContent.toLowerCase() === item.toLowerCase())) return; // 🔥 Vérifie si déjà présent
+        // Vérifie si item déjà présent
+        if ([...this.dropdownList.children].some(li => li.textContent.toLowerCase() === item.toLowerCase())) return; 
 
         const listItem = document.createElement('li');
         listItem.classList.add('dropdown__item');
         listItem.textContent = item;
-    
+
+        // Ajouter l'événement de sélection
         listItem.addEventListener('click', () => {
             console.log(`${item} sélectionné dans ${this.type}`);
             this.selectedOptions.add(item);
             this.addToResultOptions(item);
             this.updateDropdownItems();
+
         });
 
         this.dropdownList.appendChild(listItem);
@@ -101,18 +104,16 @@ export class FilterOptions {
     // Mise à jour des items dans le menu déroulant
     updateDropdownItems() {
         console.log('Mise à jour des items du menu déroulant pour', this.type);
-
-        // Supprime les items déjà affichés
-        const existingItems = Array.from(this.dropdownList.querySelectorAll('.dropdown__item'));
-        existingItems.forEach(item => item.remove());
-
-        // Recrée uniquement les items non sélectionnés
-        const uniqueItems = [...new Set(this.items)].sort();
-        uniqueItems
-        .filter(item => !this.selectedOptions.has(item.toLowerCase()))
-        .forEach(item => this.addDropdownItem(item));
-    }
     
+        // Supprime les items déjà affichés
+        this.dropdownList.innerHTML = '';
+    
+        // Supprime les doublons par un set, puis recrée les éléments
+        const uniqueItems = [...new Set(this.items)];
+        uniqueItems
+            .filter(item => !this.selectedOptions.has(item.toLowerCase()))
+            .forEach(item => this.addDropdownItem(item));
+    }
 
     // Ajoute une option sélectionnée aux résultats et met à jour les cartes
     addToResultOptions(option) {
@@ -187,7 +188,7 @@ export class FilterOptions {
             this.updateMenusAndCards(filteredRecipes, 'remove');
         });
 
-        // Filtre les recettes affichées après ajout de l'option
+        // Filtrer les recettes affichées après ajout de l'option
         const query = document.getElementById('searchInput').value.trim();
         const filteredRecipes = searchRecipes(
             this.menuCards,
@@ -286,7 +287,7 @@ export class FilterOptions {
         const currentMargin = parseInt(cards.style.marginTop || 0, 10);
 
         if (action === 'add') {
-            // Ajoute 60px si une option est ajoutée
+            // Ajouter 60px si une option est ajoutée
             cards.style.marginTop = `${currentMargin + 60}px`;
         } else if (action === 'remove') {
             // Soustraire 60px mais s'assurer que la marge ne devient pas négative
@@ -319,16 +320,16 @@ export function filterMenuOptions(menuCards) {
         menuOptionsContainer.appendChild(window.filterMenus.applianceMenu.createDropdown());
         menuOptionsContainer.appendChild(window.filterMenus.utensilMenu.createDropdown());
     }
-    //  Normaliser et éviter les doublons avec Set + tri pour meilleure lisibilité
-    const normalize = (arr) => [...new Set(arr.map(item => item.toLowerCase()))].sort();
+    // Normalise et évite les doublons avec Set car la valeur ne peut apparaître qu'une seule fois par set
+    const normalize = (arr) => [...new Set(arr.map(item => item.toLowerCase()))];
 
     // Récupére les options déjà sélectionnées
     const selectedIngredients = window.filterMenus.ingredientMenu ? [...window.filterMenus.ingredientMenu.selectedOptions] : [];
     const selectedAppliances = window.filterMenus.applianceMenu ? [...window.filterMenus.applianceMenu.selectedOptions] : [];
     const selectedUtensils = window.filterMenus.utensilMenu ? [...window.filterMenus.utensilMenu.selectedOptions] : [];
 
-    // Calcule les options restantes dans les recettes affichées
-    // Extraction et nettoyage des options disponibles
+    // Calcule les options restantes dans les recettes affichées après extraction et nettoyage de doublons
+
     const ingredients = normalize(menuCards.flatMap(card => card.ingredients.map(ing => ing.ingredient)))
         .filter(ingredient => !selectedIngredients.includes(ingredient));
 
@@ -337,6 +338,7 @@ export function filterMenuOptions(menuCards) {
 
     const utensils = normalize(menuCards.flatMap(card => card.ustensils))
         .filter(utensil => !selectedUtensils.includes(utensil));
+
 
     // Mise à jour des menus existants
     window.filterMenus.ingredientMenu.items = ingredients;
