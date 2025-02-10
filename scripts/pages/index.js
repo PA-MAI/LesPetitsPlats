@@ -88,7 +88,8 @@ class AppMenuCard {
     addSearchEvent() {
         this.$searchButton.addEventListener('click', () => {
             const query = this.$searchInput.value.trim();
-            const queryRegExp = /^[a-zA-Z%\s-]+$/; // Autorise lettres, espaces, % et -
+            // Autorise seulement les lettres avec ou sans accents, espaces et -
+            const queryRegExp = /^[a-zA-ZÀ-ÖØ-öø-ÿ\s-]+$/; 
     
             // Sélection des options
             const selectedOptions = new Set();
@@ -101,8 +102,8 @@ class AppMenuCard {
             // Gestion des erreurs
             const inputField = document.getElementById('searchBar');
             let existingWarning = inputField.nextElementSibling;
-    
-            if (existingWarning) existingWarning.remove(); // Supprime tout ancien message
+            // Supprime tout ancien message
+            if (existingWarning) existingWarning.remove(); 
     
             if (query.length < 3) {
                 const warningMessage = document.createElement('div');
@@ -137,18 +138,25 @@ class AppMenuCard {
      * Configure les événements pour le bouton de réinitialisation de l'input.
      */
     addClearButtonEvent() {
+
         // Initialisation d'un conteneur global s'il n'existe pas déjà
         this.$searchInput.addEventListener('input', () => {
             if (this.$searchInput.value.trim() !== '') {
                 this.$clearButton.style.display = 'block'
             } else {
-                this.$clearButton.style.display = 'none'
+               // this.$clearButton.style.display = 'none'
+                
             }
         })
         this.$clearButton.addEventListener('click', () => {
+            this.existingWarning = document.querySelector('.warning3c')
+            
+            // Supprime tout ancien message
+            if (this.existingWarning) this.existingWarning.remove();
             this.$searchInput.value = ''; // Efface la recherche principale
-            this.$clearButton.style.display = 'none'; // Cache le bouton de réinitialisation
+            //this.$clearButton.style.display = 'none'; // Cache le bouton de réinitialisation
             this.$searchInput.focus(); // Ramène le focus sur l'input
+            
 
             const menuCardsWrapper = this.$menuCardsWrapper;
 
