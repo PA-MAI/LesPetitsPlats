@@ -245,6 +245,9 @@ export class FilterOptions {
         clearIcon.addEventListener('click', () => {
             searchInput.value = '';
             searchInput.focus();
+            Array.from(dropdownList.querySelectorAll('.dropdown__item')).forEach(item => {
+                item.style.display ='' ;
+            });
         });
 
 
